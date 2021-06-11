@@ -27,7 +27,7 @@ class OrcamentoSchema extends Schema {
       .unsigned()
       .notNullable()
       .references('id')
-      .inTable('dentists')
+      .inTable('users')
       .onUpdate('CASCADE')
       .onDelete('CASCADE')
 
