@@ -3,7 +3,7 @@
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
-
+const Profile = use('App/Models/Profile')
 /**
  * Resourceful controller for interacting with profiles
  */
@@ -52,7 +52,9 @@ class ProfileController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show ({ params, request, response, view, auth }) {
+    const profile = await Profile.findBy('user_id', auth.user.id)
+    return profile
   }
 
   /**

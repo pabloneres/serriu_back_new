@@ -7,7 +7,7 @@ const Database = use("Database")
 
 class UserController {
   async profile({ request, auth }) {
-    const user = await User.find(auth.user.id);
+    const user = await Profile.query().where('user_id', auth.user.id)
 
     return user;
   }
@@ -39,7 +39,6 @@ class UserController {
   }
 
   async store({ request }) {
-    // return request.all()
     const trx = await Database.beginTransaction()
     const data = request.all();
 

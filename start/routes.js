@@ -17,19 +17,24 @@
 const Route = use('Route')
 
 
+Route.get('/api_status', 'SessionController.index')
 Route.post('/sessions', 'SessionController.store')
 Route.post('/users', 'UserController.store')
 
 Route.group(() => {
     Route.get('/', 'OrcamentoController.index')
     Route.post('/', 'OrcamentoController.store')
-  }).prefix('orcamentos').middleware(['auth', 'permission'])
+  }).prefix('orcamentos').middleware(['auth'])
 
 Route.group(() => {
     Route.get('/', 'UserController.index')
     Route.get('/:id', 'UserController.show')
-    Route.get('/profile', 'UserController.profile')
-  }).prefix('users').middleware(['auth', 'permission'])
+    // Route.get('/profile', 'UserController.profile')
+  }).prefix('users').middleware(['auth'])
+
+  Route.group(() => {
+    Route.get('/', 'ProfileController.show')
+  }).prefix('profile').middleware(['auth'])
 
 
   Route.group(() => {
@@ -38,7 +43,7 @@ Route.group(() => {
     Route.post('/', 'ClinicController.store')
     Route.put('/:id', 'ClinicController.update')
     Route.delete('/:id', 'ClinicController.destroy')
-  }).prefix('clinic').middleware(['auth', 'permission'])
+  }).prefix('clinic').middleware(['auth'])
 
   Route.group(() => {
     Route.get('/', 'PatientController.index')
@@ -46,7 +51,7 @@ Route.group(() => {
     Route.post('/', 'PatientController.store')
     Route.put('/:id', 'PatientController.update')
     Route.delete('/:id', 'PatientController.destroy')
-  }).prefix('patient').middleware(['auth', 'permission'])
+  }).prefix('patient').middleware(['auth'])
 
 
   Route.group(() => {
@@ -55,7 +60,7 @@ Route.group(() => {
     Route.post('/', 'TabelaEspecialidadeController.store')
     Route.put('/:id', 'TabelaEspecialidadeController.update')
     Route.delete('/:id', 'TabelaEspecialidadeController.destroy')
-  }).prefix('especialidade').middleware(['auth', 'permission'])
+  }).prefix('especialidade').middleware(['auth'])
 
 
   Route.group(() => {
@@ -64,7 +69,7 @@ Route.group(() => {
     Route.post('/', 'TabelaPrecoController.store')
     Route.put('/:id', 'TabelaPrecoController.update')
     Route.delete('/:id', 'TabelaPrecoController.destroy')
-  }).prefix('preco').middleware(['auth', 'permission'])
+  }).prefix('preco').middleware(['auth'])
 
   Route.group(() => {
     Route.get('/', 'TabelaProcedimentoController.index')
@@ -72,12 +77,12 @@ Route.group(() => {
     Route.post('/', 'TabelaProcedimentoController.store')
     Route.put('/:id', 'TabelaProcedimentoController.update')
     Route.delete('/:id', 'TabelaProcedimentoController.destroy')
-  }).prefix('procedimento').middleware(['auth', 'permission'])
+  }).prefix('procedimento').middleware(['auth'])
 
   Route.group(() => {
     Route.get('/', 'CargoController.index')
     Route.post('/', 'CargoController.store')
-  }).prefix('cargo').middleware(['auth', 'permission'])
+  }).prefix('cargo').middleware(['auth'])
 
 
   Route.post('/attachment', 'AttachmentController.store').middleware(['auth'])
