@@ -4,6 +4,7 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 const Profile = use('App/Models/Profile')
+const User = use('App/Models/User')
 /**
  * Resourceful controller for interacting with profiles
  */
@@ -53,8 +54,12 @@ class ProfileController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view, auth }) {
-    const profile = await Profile.findBy('user_id', auth.user.id)
-    return profile
+    const user = await User.findOrFail(auth.user.id)
+
+    const profile = await user.profile().fetch()
+
+
+    return {...user['$attributes'], profile}
   }
 
   /**
