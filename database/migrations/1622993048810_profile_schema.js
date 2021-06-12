@@ -7,7 +7,12 @@ class ProfileSchema extends Schema {
   up () {
     this.create('profiles', (table) => {
       table.increments()
-        table.integer('user_id').unsigned().references('id').inTable('users')
+        table.integer('user_id')
+        .unsigned()
+        .references('id')
+        .inTable('users')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE')
         table.string('avatar_url', 254)
         table.string('cpf', 254).notNullable().unique()
         table.string('rg', 254).notNullable().unique()
