@@ -1,7 +1,9 @@
+
 const Event = use('Event');
 const Mqtt = use('Mqtt');
    
 // Listen to some Events of the library
-Event.on('MQTT:Connected', 'Test.subscription')
-Event.on('MQTT:publish', 'Test.subscription')
-Event.on('MQTT:Publish', 'Test.handleMessage')
+Event.on('MQTT:Connected', 'Mqtt.connected')
+Event.on('MQTT:Disconnected', 'Mqtt.disconnected')
+
+Event.on('Esp:Informacoes', 'EspInformacao.method')

@@ -84,7 +84,11 @@ Route.group(() => {
     Route.post('/', 'CargoController.store')
   }).prefix('cargo').middleware(['auth'])
 
-
   Route.post('/attachment', 'AttachmentController.store').middleware(['auth'])
 
   Route.post('/mqtt', 'MqttController.store')
+
+  Route.group(() => {
+    Route.get('/', 'EquipamentoController.index')
+    Route.post('/', 'EquipamentoController.store')
+  }).prefix('equipamento')
