@@ -19,6 +19,7 @@ class EquipamentosSchema extends Schema {
       table.string('broker_user')
       table.string('broker_pass')
       table.string('broker_porta')
+      table.string('broker_t_send')
       table.string('sensor_rf')
       table.string('controle_rf')
       table.string('sensorRF_status')
