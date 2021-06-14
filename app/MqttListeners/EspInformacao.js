@@ -23,7 +23,7 @@ class EspInformacao extends MqttListener {
   */
   async handleMessage (message, wildcardMatches) {
     try {
-      Event.fire('Esp:Informacoes', message)
+      Event.fire('ESP:Infos', message)
     } catch (error) {
       console.log(error)
     }
