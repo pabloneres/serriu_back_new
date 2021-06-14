@@ -8,6 +8,8 @@ class EquipamentosSchema extends Schema {
     this.create('equipamentos', (table) => {
       table.increments()
       table.string('espid')
+      table.string('log')
+      table.string('versao')
       table.string('ssid')
       table.string('senha')
       table.string('ipv4')
@@ -31,3 +33,21 @@ class EquipamentosSchema extends Schema {
 }
 
 module.exports = EquipamentosSchema
+
+// { "espid"
+//   "log" 
+//   "versao"
+//   "ssid"
+//   "senha"
+//   "ipv4"
+//   "gateway"
+//   "mask"
+//   "broker_host"
+//   "broker_user"
+//   "broker_pass"
+//   "broker_porta"
+//   "broker_t_send"
+//   "sensor_rf"
+//   "controle_rf"
+//   "sensorRF_status"
+//   "sensorRF_timeout" }

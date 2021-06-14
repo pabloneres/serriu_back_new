@@ -6,4 +6,5 @@ const Mqtt = use('Mqtt');
 Event.on('MQTT:Connected', 'Mqtt.connected')
 Event.on('MQTT:Disconnected', 'Mqtt.disconnected')
 
-Event.on('Esp:Informacoes', 'EspInformacao.method')
+Event.on('ESP:Command', 'EspCommand.method')
+Event.on('ESP:Log', 'EspLog.method')
