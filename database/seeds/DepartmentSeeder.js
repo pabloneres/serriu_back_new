@@ -1,6 +1,6 @@
 'use strict'
 
-const Department = use('App/Models/Departament')
+const Department = use('App/Models/Department')
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
 const Factory = use('Factory')

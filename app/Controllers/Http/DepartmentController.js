@@ -5,15 +5,13 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /**
- * Resourceful controller for interacting with clinics
+ * Resourceful controller for interacting with departments
  */
-
-const Clinic = use('App/Models/Clinic')
-const ClinicConfig = use('App/Models/ClinicConfig')
-class ClinicController {
+const Department = use('App/Models/Department')
+class DepartmentController {
   /**
-   * Show a list of all clinics.
-   * GET clinics
+   * Show a list of all departments.
+   * GET departments
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -21,14 +19,14 @@ class ClinicController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const clinics = await Clinic.all()
+    const departments = await Department.all()
 
-    return clinics
+    return departments
   }
 
   /**
-   * Render a form to be used for creating a new clinic.
-   * GET clinics/create
+   * Render a form to be used for creating a new department.
+   * GET departments/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -39,25 +37,19 @@ class ClinicController {
   }
 
   /**
-   * Create/save a new clinic.
-   * POST clinics
+   * Create/save a new department.
+   * POST departments
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
-    const data = request.all()
-    
-    const clinic = await Clinic.create(data)
-    
-    await ClinicConfig.create({clinic_id: clinic.id})
-    
   }
 
   /**
-   * Display a single clinic.
-   * GET clinics/:id
+   * Display a single department.
+   * GET departments/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -65,14 +57,11 @@ class ClinicController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const clinic = await Clinic.findOrFail(params.id)
-
-    return clinic
   }
 
   /**
-   * Render a form to update an existing clinic.
-   * GET clinics/:id/edit
+   * Render a form to update an existing department.
+   * GET departments/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -83,36 +72,26 @@ class ClinicController {
   }
 
   /**
-   * Update clinic details.
-   * PUT or PATCH clinics/:id
+   * Update department details.
+   * PUT or PATCH departments/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params: {id}, request, response }) {
-    const data = request.all()
-
-    const clinic = await Clinic.findOrFail(id)
-
-    clinic.merge(data)
-
-    clinic.save()
+  async update ({ params, request, response }) {
   }
 
   /**
-   * Delete a clinic with id.
-   * DELETE clinics/:id
+   * Delete a department with id.
+   * DELETE departments/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params: {id}, request, response }) {
-    const clinic = await Clinic.findOrFail(id)
-
-    clinic.delete()
+  async destroy ({ params, request, response }) {
   }
 }
 
-module.exports = ClinicController
+module.exports = DepartmentController

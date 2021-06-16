@@ -46,6 +46,10 @@ Route.group(() => {
   }).prefix('clinic').middleware(['auth'])
 
   Route.group(() => {
+    Route.get('/:id', 'ClinicConfigController.show')
+  }).prefix('clinicConfig').middleware(['auth'])
+
+  Route.group(() => {
     Route.get('/', 'PatientController.index')
     Route.get('/:id', 'PatientController.show')
     Route.post('/', 'PatientController.store')
@@ -92,3 +96,18 @@ Route.group(() => {
     Route.get('/', 'EquipamentoController.index')
     Route.post('/', 'EquipamentoController.store')
   }).prefix('equipamento')
+
+  Route.group(() => {
+    Route.get('/', 'RoleController.index')
+    Route.post('/', 'RoleController.store')
+  }).prefix('roles')
+
+  Route.group(() => {
+    Route.get('/', 'DepartmentController.index')
+    Route.post('/', 'DepartmentController.store')
+  }).prefix('department')
+ 
+  Route.group(() => {
+    Route.get('/', 'DepartmentRoleController.index')
+    Route.post('/', 'DepartmentRoleController.store')
+  }).prefix('departmentRoles')

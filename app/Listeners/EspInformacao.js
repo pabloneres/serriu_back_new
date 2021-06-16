@@ -15,12 +15,7 @@ EspInformacao.method = async (data) => {
     return
   }
 
-  const esp = await Equipamento.findOrFail(hasEsp.id)
-
-  esp.merge(command)
-
-  await esp.save
-
+  await Equipamento.query().where('espid', command.espid).update(command)
 
   return
 

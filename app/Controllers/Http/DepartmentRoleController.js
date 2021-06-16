@@ -5,13 +5,13 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /**
- * Resourceful controller for interacting with cargos
+ * Resourceful controller for interacting with departmentroles
  */
-const Cargo = use('App/Models/Cargo')
-class CargoController {
+const DepartmentRole = use('App/Models/DepartmentRole')
+class DepartmentRoleController {
   /**
-   * Show a list of all cargos.
-   * GET cargos
+   * Show a list of all departmentroles.
+   * GET departmentroles
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -19,14 +19,14 @@ class CargoController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const cargos = await Cargo.all()
+    const departmentRoles = await DepartmentRole.all()
 
-    return cargos
+    return departmentRoles
   }
 
   /**
-   * Render a form to be used for creating a new cargo.
-   * GET cargos/create
+   * Render a form to be used for creating a new departmentrole.
+   * GET departmentroles/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -37,8 +37,8 @@ class CargoController {
   }
 
   /**
-   * Create/save a new cargo.
-   * POST cargos
+   * Create/save a new departmentrole.
+   * POST departmentroles
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -48,8 +48,8 @@ class CargoController {
   }
 
   /**
-   * Display a single cargo.
-   * GET cargos/:id
+   * Display a single departmentrole.
+   * GET departmentroles/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -60,8 +60,8 @@ class CargoController {
   }
 
   /**
-   * Render a form to update an existing cargo.
-   * GET cargos/:id/edit
+   * Render a form to update an existing departmentrole.
+   * GET departmentroles/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -72,8 +72,8 @@ class CargoController {
   }
 
   /**
-   * Update cargo details.
-   * PUT or PATCH cargos/:id
+   * Update departmentrole details.
+   * PUT or PATCH departmentroles/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -83,8 +83,8 @@ class CargoController {
   }
 
   /**
-   * Delete a cargo with id.
-   * DELETE cargos/:id
+   * Delete a departmentrole with id.
+   * DELETE departmentroles/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -94,4 +94,4 @@ class CargoController {
   }
 }
 
-module.exports = CargoController
+module.exports = DepartmentRoleController

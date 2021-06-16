@@ -16,6 +16,14 @@ class RoleSeeder {
         id: 'agenda',
         name: 'Agenda'
       },
+      {
+        id: 'clinics',
+        name: 'Clinicas'
+      },
+      {
+        id: 'patients',
+        name: 'Pacientes'
+      },
     ]
 
     await Role.createMany(roles)
