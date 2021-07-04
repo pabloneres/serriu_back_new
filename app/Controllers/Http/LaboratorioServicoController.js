@@ -5,13 +5,13 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /**
- * Resourceful controller for interacting with clinicconfigs
+ * Resourceful controller for interacting with laboratorioservicos
  */
-const ClinicConfig = use('App/Models/ClinicConfig')
-class ClinicConfigController {
+const LaboratorioServico = use('App/Models/LaboratorioServico')
+class LaboratorioServicoController {
   /**
-   * Show a list of all clinicconfigs.
-   * GET clinicconfigs
+   * Show a list of all laboratorioservicos.
+   * GET laboratorioservicos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -19,11 +19,17 @@ class ClinicConfigController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
+    const {laboratorio_id} = request.get()
+
+    const laboratorioservico = await LaboratorioServico.query().where('laboratorio_id', laboratorio_id).fetch()
+  
+    return laboratorioservico
+    
   }
 
   /**
-   * Render a form to be used for creating a new clinicconfig.
-   * GET clinicconfigs/create
+   * Render a form to be used for creating a new laboratorioservico.
+   * GET laboratorioservicos/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -34,19 +40,22 @@ class ClinicConfigController {
   }
 
   /**
-   * Create/save a new clinicconfig.
-   * POST clinicconfigs
+   * Create/save a new laboratorioservico.
+   * POST laboratorioservicos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
+    const data = request.all()
+
+    await LaboratorioServico.create(data)
   }
 
   /**
-   * Display a single clinicconfig.
-   * GET clinicconfigs/:id
+   * Display a single laboratorioservico.
+   * GET laboratorioservicos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -54,14 +63,11 @@ class ClinicConfigController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const config = await ClinicConfig.findBy('clinic_id', params.id)
-
-    return config
   }
 
   /**
-   * Render a form to update an existing clinicconfig.
-   * GET clinicconfigs/:id/edit
+   * Render a form to update an existing laboratorioservico.
+   * GET laboratorioservicos/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -72,36 +78,29 @@ class ClinicConfigController {
   }
 
   /**
-   * Update clinicconfig details.
-   * PUT or PATCH clinicconfigs/:id
+   * Update laboratorioservico details.
+   * PUT or PATCH laboratorioservicos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
-    const config = await ClinicConfig.findOrFail(params.id)
-  
-    const data = request.all()
-    
-    await config.merge(data)
-
-    await config.save()
-
-    return config
-
   }
 
   /**
-   * Delete a clinicconfig with id.
-   * DELETE clinicconfigs/:id
+   * Delete a laboratorioservico with id.
+   * DELETE laboratorioservicos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
+    const service = await LaboratorioServico.findOrFail(params.id)
+
+    await service.delete()
   }
 }
 
-module.exports = ClinicConfigController
+module.exports = LaboratorioServicoController

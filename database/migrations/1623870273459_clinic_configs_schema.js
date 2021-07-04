@@ -9,7 +9,7 @@ class ClinicConfigsSchema extends Schema {
       table.increments()
       table.integer('clinic_id').references('id').inTable('clinics').notNullable()
       
-      table.boolean('workBoletos')
+      table.boolean('workBoletos').defaultTo(false)
       table.integer('maxParcelas')
       table.float('entMinima', 8, 2)
 

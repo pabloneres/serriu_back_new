@@ -5,97 +5,93 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /**
- * Resourceful controller for interacting with departments
+ * Resourceful controller for interacting with metodospagamentos
  */
-
-const Department = use('App/Models/Department')
-class DepartmentController {
+const Metodos = use('App/Models/MetodosPagamento')
+class MetodosPagamentoController {
   /**
-   * Show a list of all departments.
-   * GET departments
+   * Show a list of all metodospagamentos.
+   * GET metodospagamentos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-    const departments = await Department.all()
+  async index({ request, response, view }) {
+    const metodos = await Metodos.all()
 
-    return departments
+    return metodos
   }
 
   /**
-   * Render a form to be used for creating a new department.
-   * GET departments/create
+   * Render a form to be used for creating a new metodospagamento.
+   * GET metodospagamentos/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
+  async create({ request, response, view }) {
   }
 
   /**
-   * Create/save a new department.
-   * POST departments
+   * Create/save a new metodospagamento.
+   * POST metodospagamentos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
-    const data = request.all()
-
-    await Department.create(data)
+  async store({ request, response }) {
   }
 
   /**
-   * Display a single department.
-   * GET departments/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing department.
-   * GET departments/:id/edit
+   * Display a single metodospagamento.
+   * GET metodospagamentos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
   }
 
   /**
-   * Update department details.
-   * PUT or PATCH departments/:id
+   * Render a form to update an existing metodospagamento.
+   * GET metodospagamentos/:id/edit
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   * @param {View} ctx.view
+   */
+  async edit({ params, request, response, view }) {
+  }
+
+  /**
+   * Update metodospagamento details.
+   * PUT or PATCH metodospagamentos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
   }
 
   /**
-   * Delete a department with id.
-   * DELETE departments/:id
+   * Delete a metodospagamento with id.
+   * DELETE metodospagamentos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
   }
 }
 
-module.exports = DepartmentController
+module.exports = MetodosPagamentoController

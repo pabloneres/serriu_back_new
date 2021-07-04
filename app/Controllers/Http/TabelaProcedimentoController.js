@@ -21,7 +21,7 @@ class TabelaProcedimentoController {
   async index ({ request, response, view }) {
     const {id} = request.get()
 
-    const procedimentos = await Procediemento.query().where('tabela_id', id)
+    const procedimentos = await Procediemento.query().where('tabela_id', Number(id))
     .with('especialidade').fetch()
 
     return procedimentos

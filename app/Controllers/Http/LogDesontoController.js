@@ -5,13 +5,12 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /**
- * Resourceful controller for interacting with clinicconfigs
+ * Resourceful controller for interacting with logdesontos
  */
-const ClinicConfig = use('App/Models/ClinicConfig')
-class ClinicConfigController {
+class LogDesontoController {
   /**
-   * Show a list of all clinicconfigs.
-   * GET clinicconfigs
+   * Show a list of all logdesontos.
+   * GET logdesontos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -22,8 +21,8 @@ class ClinicConfigController {
   }
 
   /**
-   * Render a form to be used for creating a new clinicconfig.
-   * GET clinicconfigs/create
+   * Render a form to be used for creating a new logdesonto.
+   * GET logdesontos/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -34,8 +33,8 @@ class ClinicConfigController {
   }
 
   /**
-   * Create/save a new clinicconfig.
-   * POST clinicconfigs
+   * Create/save a new logdesonto.
+   * POST logdesontos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -45,8 +44,8 @@ class ClinicConfigController {
   }
 
   /**
-   * Display a single clinicconfig.
-   * GET clinicconfigs/:id
+   * Display a single logdesonto.
+   * GET logdesontos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -54,14 +53,11 @@ class ClinicConfigController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const config = await ClinicConfig.findBy('clinic_id', params.id)
-
-    return config
   }
 
   /**
-   * Render a form to update an existing clinicconfig.
-   * GET clinicconfigs/:id/edit
+   * Render a form to update an existing logdesonto.
+   * GET logdesontos/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -72,29 +68,19 @@ class ClinicConfigController {
   }
 
   /**
-   * Update clinicconfig details.
-   * PUT or PATCH clinicconfigs/:id
+   * Update logdesonto details.
+   * PUT or PATCH logdesontos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
-    const config = await ClinicConfig.findOrFail(params.id)
-  
-    const data = request.all()
-    
-    await config.merge(data)
-
-    await config.save()
-
-    return config
-
   }
 
   /**
-   * Delete a clinicconfig with id.
-   * DELETE clinicconfigs/:id
+   * Delete a logdesonto with id.
+   * DELETE logdesontos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -104,4 +90,4 @@ class ClinicConfigController {
   }
 }
 
-module.exports = ClinicConfigController
+module.exports = LogDesontoController

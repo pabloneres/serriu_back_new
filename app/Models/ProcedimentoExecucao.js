@@ -4,6 +4,12 @@
 const Model = use('Model')
 
 class ProcedimentoExecucao extends Model {
+  dentista() {
+    return this.belongsTo('App/Models/User', 'dentista_id', 'id')
+  }
+  procedimento() {
+      return this.belongsTo('App/Models/TabelaProcedimento', 'procedimento_id', 'id')
+  }
 }
 
 module.exports = ProcedimentoExecucao

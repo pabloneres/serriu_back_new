@@ -7,7 +7,7 @@ const Model = use('Model')
 const Hash = use('Hash')
 
 class User extends Model {
-  static boot () {
+  static boot() {
     super.boot()
 
     this.addHook('beforeSave', async (userInstance) => {
@@ -24,20 +24,20 @@ class User extends Model {
   // }
 
 
-  static get hidden () {
+  static get hidden() {
     return ['password']
   }
 
-  departments () {
-    return this.belongsToMany('App/Models/Departament')
-    .pivotTable('departament_users')
+  department() {
+    return this.belongsToMany('App/Models/Department')
+      .pivotTable('user_departments')
   }
 
-  profile () {
+  profile() {
     return this.hasOne('App/Models/Profile')
   }
 
-  acessos () {
+  acessos() {
     return this.hasMany('App/Models/UserAcessClinic')
   }
   /**
@@ -50,7 +50,7 @@ class User extends Model {
    *
    * @return {Object}
    */
-  tokens () {
+  tokens() {
     return this.hasMany('App/Models/Token')
   }
 }

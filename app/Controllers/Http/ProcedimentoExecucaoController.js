@@ -7,86 +7,64 @@
 /**
  * Resourceful controller for interacting with procedimentoexecucaos
  */
+const ProcedimentoExecucao = use('App/Models/ProcedimentoExecucao')
+const User = use('App/Models/User')
+const Orcamento = use('App/Models/Orcamento')
+const DepartmentClinc = use('App/Models/DepartmentClinc')
+
 class ProcedimentoExecucaoController {
-  /**
-   * Show a list of all procedimentoexecucaos.
-   * GET procedimentoexecucaos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
   }
 
-  /**
-   * Render a form to be used for creating a new procedimentoexecucao.
-   * GET procedimentoexecucaos/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+  async create({ request, response, view }) {
   }
 
-  /**
-   * Create/save a new procedimentoexecucao.
-   * POST procedimentoexecucaos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
+  async store({ request, response }) {
+    // return request.all()
+    const data = request.all()
+
+    const user = await User.findBy('code', data.passwordCode)
+
+    if (!user) {
+      response.status(401).send({ message: 'Acesso negado' })
+    }
+
+    const orcamento = await Orcamento.findBy('id', data.orcamento_id)
+
+    const diff = data.valor - Number(data.valorTotal)
+    const porcentagem = ((diff * 100) / data.valor).toFixed(1)
+
+    const department = await user.department().first()
+
+    const descontoPermitido = await DepartmentClinc
+      .query()
+      .where('clinic_id', orcamento.clinic_id)
+      .andWhere('department_id', department.id).first()
+
+    const permitido = descontoPermitido.discount >= porcentagem
+
+    if (!permitido) {
+      response.status(401).send({ message: 'Desconto não autorizado' })
+    }
+
+    const procedimento = await ProcedimentoExecucao.query().where('id', data.id).update({
+      desconto: Number(data.valorTotal)
+    })
+
+    return procedimento
+
   }
 
-  /**
-   * Display a single procedimentoexecucao.
-   * GET procedimentoexecucaos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
   }
 
-  /**
-   * Render a form to update an existing procedimentoexecucao.
-   * GET procedimentoexecucaos/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+  async edit({ params, request, response, view }) {
   }
 
-  /**
-   * Update procedimentoexecucao details.
-   * PUT or PATCH procedimentoexecucaos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
   }
 
-  /**
-   * Delete a procedimentoexecucao with id.
-   * DELETE procedimentoexecucaos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
   }
 }
 

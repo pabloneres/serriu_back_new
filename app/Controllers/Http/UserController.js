@@ -3,6 +3,8 @@
 const User = use("App/Models/User");
 const Profile = use("App/Models/Profile");
 const UserAcessClinic = use("App/Models/UserAcessClinic");
+const UserDepartment = use("App/Models/UserDepartment");
+
 const Database = use("Database")
 
 class UserController {
@@ -46,6 +48,7 @@ class UserController {
       username: data.username,
       email: data.email,
       cargo: data.cargo,
+      code: data.code,
       firstName: data.firstName,
       lastName: data.lastName,
       password: data.password,

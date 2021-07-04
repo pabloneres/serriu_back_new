@@ -5,13 +5,15 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /**
- * Resourceful controller for interacting with clinicconfigs
+ * Resourceful controller for interacting with formapagamentos
  */
-const ClinicConfig = use('App/Models/ClinicConfig')
-class ClinicConfigController {
+
+const FormaPagamento = use('App/Models/FormaPagamento')
+
+class FormaPagamentoController {
   /**
-   * Show a list of all clinicconfigs.
-   * GET clinicconfigs
+   * Show a list of all formapagamentos.
+   * GET formapagamentos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -22,8 +24,8 @@ class ClinicConfigController {
   }
 
   /**
-   * Render a form to be used for creating a new clinicconfig.
-   * GET clinicconfigs/create
+   * Render a form to be used for creating a new formapagamento.
+   * GET formapagamentos/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -34,8 +36,8 @@ class ClinicConfigController {
   }
 
   /**
-   * Create/save a new clinicconfig.
-   * POST clinicconfigs
+   * Create/save a new formapagamento.
+   * POST formapagamentos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -45,8 +47,8 @@ class ClinicConfigController {
   }
 
   /**
-   * Display a single clinicconfig.
-   * GET clinicconfigs/:id
+   * Display a single formapagamento.
+   * GET formapagamentos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -54,14 +56,11 @@ class ClinicConfigController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const config = await ClinicConfig.findBy('clinic_id', params.id)
-
-    return config
   }
 
   /**
-   * Render a form to update an existing clinicconfig.
-   * GET clinicconfigs/:id/edit
+   * Render a form to update an existing formapagamento.
+   * GET formapagamentos/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -72,29 +71,26 @@ class ClinicConfigController {
   }
 
   /**
-   * Update clinicconfig details.
-   * PUT or PATCH clinicconfigs/:id
+   * Update formapagamento details.
+   * PUT or PATCH formapagamentos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
-    const config = await ClinicConfig.findOrFail(params.id)
-  
     const data = request.all()
-    
-    await config.merge(data)
+    const pagamento = await FormaPagamento.findOrFail(params.id)
 
-    await config.save()
+    pagamento.merge(data)
 
-    return config
+    await pagamento.save()
 
   }
 
   /**
-   * Delete a clinicconfig with id.
-   * DELETE clinicconfigs/:id
+   * Delete a formapagamento with id.
+   * DELETE formapagamentos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -104,4 +100,4 @@ class ClinicConfigController {
   }
 }
 
-module.exports = ClinicConfigController
+module.exports = FormaPagamentoController

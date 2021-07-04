@@ -21,7 +21,7 @@ class ClinicController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const clinics = await Clinic.all()
+    const clinics = await Clinic.query().with('config').fetch()
 
     return clinics
   }

@@ -26,6 +26,7 @@ class TabelaProcedimentoSchema extends Schema {
       table.string('name', 250)
       table.integer('geral', 2)
       table.float('valor', 8, 2)
+      table.integer('labsService').references('id').inTable('laboratorio_servicos')
       table.timestamps()
     })
   }
