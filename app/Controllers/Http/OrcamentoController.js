@@ -69,7 +69,8 @@ class OrcamentoController {
       ...orcamento,
       valor: procedimentos.reduce((a, b) => a + b.valor, 0),
       restante: procedimentos.reduce((a, b) => a + b.valor, 0),
-      avaliador: data.avaliador
+      avaliador: data.avaliador,
+      valorDesconto: procedimentos.reduce((a, b) => a + b.valor, 0)
     }
     saveOrcamento = await Orcamento.create(saveOrcamento, trx)
 

@@ -14,6 +14,20 @@ const DepartmentClinc = use('App/Models/DepartmentClinc')
 
 class ProcedimentoExecucaoController {
   async index({ request, response, view }) {
+    const { status, paciente_id } = request.get()
+
+    const procedimentos = await Orcamento
+      .query()
+      .where('paciente_id', paciente_id)
+      .with('procedimentos', builder => {
+        builder
+          .where('status', status)
+          .with('procedimento')
+          .with('dentista')
+      })
+      .fetch()
+
+    return procedimentos
   }
 
   async create({ request, response, view }) {
@@ -46,6 +60,11 @@ class ProcedimentoExecucaoController {
     if (!permitido) {
       response.status(401).send({ message: 'Desconto não autorizado' })
     }
+
+    await Orcamento.query().where('id', orcamento.id).update({
+      restante: orcamento.restante - diff,
+      valorDesconto: orcamento.restante - diff
+    })
 
     const procedimento = await ProcedimentoExecucao.query().where('id', data.id).update({
       desconto: Number(data.valorTotal)

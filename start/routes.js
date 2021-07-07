@@ -169,3 +169,8 @@ Route.group(() => {
   Route.get('/', 'ProcedimentoExecucaoController.index')
   Route.post('/', 'ProcedimentoExecucaoController.store')
 }).prefix('procedimentoExecucao')
+
+
+Route.group(() => {
+  Route.post('/', 'PermissaoController.hasPermission')
+}).prefix('permissaoCode').middleware(['auth'])

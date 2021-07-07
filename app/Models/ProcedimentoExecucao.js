@@ -8,7 +8,12 @@ class ProcedimentoExecucao extends Model {
     return this.belongsTo('App/Models/User', 'dentista_id', 'id')
   }
   procedimento() {
-      return this.belongsTo('App/Models/TabelaProcedimento', 'procedimento_id', 'id')
+    return this.belongsTo('App/Models/TabelaProcedimento', 'procedimento_id', 'id')
+  }
+
+  procedimentos() {
+    return this.belongsTo('App/Models/ProcedimentoExecucao')
+      .pivotTable('orcamentos')
   }
 }
 

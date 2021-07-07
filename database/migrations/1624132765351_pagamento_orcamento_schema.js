@@ -36,6 +36,7 @@ class PagamentoOrcamentoSchema extends Schema {
       table.float('restante', 8, 2)
       table.float('restanteOrcamento', 8, 2)
       table.float('valorAplicado', 8, 2)
+      table.float('desconto', 8, 2)
       table.timestamps()
     })
   }

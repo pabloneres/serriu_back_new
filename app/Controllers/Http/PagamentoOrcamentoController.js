@@ -75,14 +75,18 @@ class PagamentoOrcamentoController {
 
       procedimento_ids = procedimento_ids.map(item => {
 
-        orcamentoRestante = orcamentoRestante - item.valor
+        console.log(orcamentoRestante)
+        console.log(item.valorTotal)
+
+        orcamentoRestante = Number(orcamentoRestante) - Number(item.valorTotal)
+
 
         return {
           orcamento_id,
           procedimento_id: item.id,
           formaPagamento,
           status: 'pago',
-          valor: item.valor,
+          valor: item.desconto,
           restanteOrcamento: orcamentoRestante
         }
       })
