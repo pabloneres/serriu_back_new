@@ -6,15 +6,27 @@ const Department = use('App/Models/Department')
 const Factory = use('Factory')
 
 class DepartmentSeeder {
-  async run () {
+  async run() {
     const departments = [
       {
-        name: 'Dentista',
-        description: 'dentista clinica'
+        id: 'administrador',
+        name: 'Administrador',
+        description: 'Admin do sistema'
       },
       {
+        id: 'dentista',
+        name: 'Dentista',
+        description: 'Dentista'
+      },
+      {
+        id: 'recepcionista',
         name: 'Recepcionista',
-        description: 'recepcionista clinica'
+        description: 'Recepcionista'
+      },
+      {
+        id: 'asb',
+        name: 'Asb',
+        description: 'Auxiliar de saude bucal'
       }
     ]
 

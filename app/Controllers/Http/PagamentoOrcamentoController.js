@@ -12,6 +12,7 @@ const ProcedimentoExecucao = use('App/Models/ProcedimentoExecucao')
 const Orcamento = use('App/Models/Orcamento')
 const BoletosPagamento = use('App/Models/BoletosPagamento')
 const FormaPagamento = use('App/Models/FormaPagamento')
+const SaldoEspecialidade = use('App/Models/SaldoEspecialidade')
 const Database = use('Database')
 
 //  const HelpersComissao = use('App/Helpers/comissao')
@@ -86,7 +87,8 @@ class PagamentoOrcamentoController {
           procedimento_id: item.id,
           formaPagamento,
           status: 'pago',
-          valor: item.desconto,
+          valor: item.valor,
+          desconto: item.desconto ? item.desconto : item.valor,
           restanteOrcamento: orcamentoRestante
         }
       })
@@ -94,7 +96,7 @@ class PagamentoOrcamentoController {
       const pagamento = await PagamentoOrcamento.createMany(procedimento_ids)
 
       await ProcedimentoExecucao.query().whereIn('id', ids_procedimento)
-        .update({ status: 'pago' })
+        .update({ status_pagamento: 'pago' })
 
       await Orcamento.query().where('id', orcamento_id).update({
         status: 'andamento',
@@ -105,22 +107,81 @@ class PagamentoOrcamentoController {
       return pagamento
     }
 
+
+
+    ///////////////////////////////////////////////////
     if (condicao === 'total') {
       especialidades = especialidades.filter(item => item.valorAplicado > 0)
 
-      especialidades = especialidades.map(item => ({
-        orcamento_id,
-        especialidade_id: item.id,
-        formaPagamento,
-        status: 'pago',
-        valor: item.valor,
-        restanteOrcamento: orcamento.restante - valor,
-        valorAplicado: item.valorAplicado,
-        restante: item.restante ? item.restante - item.valorAplicado : item.valor - item.valorAplicado,
-      }))
+      let especiAplicado = []
+      let especiSaldo = []
+
+      especialidades = especialidades.forEach(item => {
+        especiAplicado.push({
+          orcamento_id,
+          especialidade_id: item.id,
+          formaPagamento,
+          status: 'pago',
+          valor: item.valor,
+          restanteOrcamento: orcamento.restante - valor,
+          valorAplicado: item.valorAplicado,
+          restante: item.restante ? item.restante - item.valorAplicado : item.valor - item.valorAplicado,
+        })
+
+        especiSaldo.push({
+          orcamento_id,
+          especialidade_id: item.id,
+          saldo: item.valorAplicado
+        })
+
+      })
 
 
-      const pagamento = await PagamentoOrcamento.createMany(especialidades)
+      const pagamento = await PagamentoOrcamento.createMany(especiAplicado)
+
+      let saldoEspecialidade = await Database.from('saldo_especialidades').where('orcamento_id', orcamento_id)
+
+      let newSaldo = []
+
+      saldoEspecialidade.forEach((item) => {
+        var index = especiSaldo.findIndex(current => current.especialidade_id === item.especialidade_id)
+
+        if (index === -1) {
+          return
+        }
+
+        especiSaldo[index].saldo = especiSaldo[index].saldo + item.saldo
+        especiSaldo[index].id = item.id
+      });
+
+
+      especiSaldo.forEach(async element => {
+        try {
+          let row = await SaldoEspecialidade.query()
+            .where('especialidade_id', element.especialidade_id)
+            .andWhere('orcamento_id', element.orcamento_id).first()
+
+          if (row) {
+            await SaldoEspecialidade.query()
+              .where('id', element.id)
+              .update({
+                saldo: element.saldo
+              }, trx)
+            return
+          }
+
+          await SaldoEspecialidade.create({
+            orcamento_id: element.orcamento_id,
+            especialidade_id: element.especialidade_id,
+            saldo: element.saldo,
+          }, trx)
+        } catch (error) {
+          console.log(error)
+        }
+      })
+
+      // return newSaldo
+      // await SaldoEspecialidade.createMany(newSaldo)
 
       // const teste = await ProcedimentoExecucao.query().whereIn('id', ids_procedimento)
       // .update({status: 'pago'})
@@ -128,11 +189,15 @@ class PagamentoOrcamentoController {
         status: 'andamento',
         saldo: orcamento.saldo + valor,
         restante: orcamento.restante - valor
-      })
+      }, trx)
 
-      return pagamento
+      trx.commit()
+
+      return
     }
 
+
+    ////////////////////////////////////////////////
     if (condicao === 'boleto') {
       // return especialidades
       let boleto = []
@@ -189,7 +254,7 @@ class PagamentoOrcamentoController {
       } else {
         await Orcamento.query().where('id', orcamento_id).update({
           status: 'andamento',
-          saldo: orcamento.valor - cobranca.entrada,
+          saldo: cobranca.entrada,
           restante: orcamento.valor - cobranca.entrada
         }, trx)
       }

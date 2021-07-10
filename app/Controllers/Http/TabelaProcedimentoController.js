@@ -18,11 +18,11 @@ class TabelaProcedimentoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-    const {id} = request.get()
+  async index({ request, response, view }) {
+    const { id } = request.get()
 
     const procedimentos = await Procediemento.query().where('tabela_id', Number(id))
-    .with('especialidade').fetch()
+      .with('especialidade').fetch()
 
     return procedimentos
   }
@@ -36,7 +36,7 @@ class TabelaProcedimentoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
+  async create({ request, response, view }) {
 
   }
 
@@ -48,7 +48,7 @@ class TabelaProcedimentoController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
     const data = request.all()
 
     delete data.preco
@@ -64,7 +64,7 @@ class TabelaProcedimentoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
   }
 
   /**
@@ -76,7 +76,7 @@ class TabelaProcedimentoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
+  async edit({ params, request, response, view }) {
   }
 
   /**
@@ -87,12 +87,12 @@ class TabelaProcedimentoController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
     const procedimento = await Procediemento.findOrFail(params.id)
 
     const data = request.all()
 
-    procedimento.merge({name: data.name})
+    procedimento.merge({ name: data.name })
 
     procedimento.save()
   }
@@ -105,10 +105,10 @@ class TabelaProcedimentoController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
-    const Procediemento = await Procediemento.findOrFail(params.id)
+  async destroy({ params, request, response }) {
+    const procediemento = await Procediemento.findOrFail(params.id)
 
-    Procediemento.delete()
+    procediemento.delete()
   }
 }
 

@@ -4,17 +4,17 @@
 const Schema = use('Schema')
 
 class DepartmentClincSchema extends Schema {
-  up () {
+  up() {
     this.create('department_clincs', (table) => {
       table.increments()
       table.integer('clinic_id').references('id').inTable('clinics')
-      table.integer('department_id').references('id').inTable('departments')
+      table.string('department_id').references('id').inTable('departments')
       table.float('discount')
       table.timestamps()
     })
   }
 
-  down () {
+  down() {
     this.drop('department_clincs')
   }
 }

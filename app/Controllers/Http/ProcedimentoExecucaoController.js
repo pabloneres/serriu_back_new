@@ -11,21 +11,44 @@ const ProcedimentoExecucao = use('App/Models/ProcedimentoExecucao')
 const User = use('App/Models/User')
 const Orcamento = use('App/Models/Orcamento')
 const DepartmentClinc = use('App/Models/DepartmentClinc')
+const SaldoEspecialidade = use('App/Models/SaldoEspecialidade')
+const Database = use('Database')
 
 class ProcedimentoExecucaoController {
   async index({ request, response, view }) {
     const { status, paciente_id } = request.get()
 
-    const procedimentos = await Orcamento
-      .query()
+    const procedimentos = await Orcamento.query()
       .where('paciente_id', paciente_id)
       .with('procedimentos', builder => {
         builder
-          .where('status', status)
-          .with('procedimento')
-          .with('dentista')
+          .with('dentista', builder => {
+            builder.select('id', 'firstName', 'lastName')
+          })
+          .with('procedimento.especialidade', builder => {
+            builder.select('id', 'name')
+          })
+          .orderBy('id', 'cres')
       })
+      .with('pagamento')
+      .with('pagamentos.especialidades')
+      .with('saldoEspecialidade')
+      .with('boletos')
+      .orderBy('id', 'desc')
       .fetch()
+
+    // .with('procedimentos', builder => {
+    //   builder
+    //     .with('dentista', builder => {
+    //       builder.select('id', 'firstName', 'lastName')
+    //     })
+    //     .with('procedimento.especialidade', builder => {
+    //       builder.select('id', 'name')
+    //     })
+    //     .orderBy('id', 'cres')
+    // })
+    // .with('pagamento')
+    // .with('pagamentos.especialidades')
 
     return procedimentos
   }
@@ -63,7 +86,7 @@ class ProcedimentoExecucaoController {
 
     await Orcamento.query().where('id', orcamento.id).update({
       restante: orcamento.restante - diff,
-      valorDesconto: orcamento.restante - diff
+      valorDesconto: orcamento.valorDesconto - diff
     })
 
     const procedimento = await ProcedimentoExecucao.query().where('id', data.id).update({
@@ -81,6 +104,54 @@ class ProcedimentoExecucaoController {
   }
 
   async update({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    const data = request.all()
+
+    const orcamento = await Orcamento.findBy('id', data.orcamento_id)
+
+    let procedimento = await ProcedimentoExecucao.query()
+      .where('id', data.procedimento_id)
+      .with('procedimento.especialidade')
+      .first()
+
+    procedimento = procedimento.toJSON()
+
+    let sobra = Number(orcamento.saldo) - Number(procedimento.desconto)
+
+    await ProcedimentoExecucao.query().where('id', procedimento.id).update({
+      status_execucao: 'executado',
+      detalhes: data.detalhes
+    }, trx)
+
+    const saldo = await SaldoEspecialidade
+      .query()
+      .where('orcamento_id', data.orcamento_id)
+      .andWhere('especialidade_id', procedimento.procedimento.especialidade_id).first()
+
+    await SaldoEspecialidade.query()
+      .where('id', saldo.id)
+      .update({
+        saldo: saldo.saldo - procedimento.desconto
+      })
+
+
+    await Orcamento.query().where('id', orcamento.id).update({
+      saldo: sobra
+    }, trx)
+
+    // const [{ "count(*)": totalExecutado }] = await Database.table('procedimentos_orcamentos').count('*').where('orcamento_id', id).andWhere('status', 'executado')
+
+    // if(totalAberto === 0) {
+    //   await Orcamento.query().where('id', id).update({
+    //     status: 'finalizado'
+    //   }, trx)
+
+    //   await ComissaoDentista.query().where('orcamento_id', orcamento.id).update({
+    //     status_comissao: 'pagar'
+    //   })
+    // }
+
+    trx.commit()
   }
 
   async destroy({ params, request, response }) {

@@ -4,9 +4,9 @@
 const Schema = use('Schema')
 
 class DepartmentRolesSchema extends Schema {
-  up () {
+  up() {
     this.create('department_roles', (table) => {
-      table.integer('department_id').primary().references('id').inTable('departments')
+      table.string('department_id').primary().references('id').inTable('departments')
       table.string('role_id').references('id').inTable('roles')
       table.boolean('view')
       table.boolean('add')
@@ -17,7 +17,7 @@ class DepartmentRolesSchema extends Schema {
     })
   }
 
-  down () {
+  down() {
     this.drop('department_roles')
   }
 }

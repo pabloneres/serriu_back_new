@@ -29,8 +29,8 @@ class User extends Model {
   }
 
   department() {
-    return this.belongsToMany('App/Models/Department')
-      .pivotTable('user_departments')
+    return this.belongsTo('App/Models/Department')
+
   }
 
   profile() {
@@ -40,6 +40,11 @@ class User extends Model {
   acessos() {
     return this.hasMany('App/Models/UserAcessClinic')
   }
+
+  // clinic() {
+  //   return this.belongsToMany('App/Models/UserAcessClinic')
+  //     .pivotTable('user_acess_clinics')
+  // }
   /**
    * A relationship on tokens is required for auth to
    * work. Since features like `refreshTokens` or

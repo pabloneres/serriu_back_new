@@ -168,6 +168,7 @@ Route.group(() => {
 Route.group(() => {
   Route.get('/', 'ProcedimentoExecucaoController.index')
   Route.post('/', 'ProcedimentoExecucaoController.store')
+  Route.put('/:id', 'ProcedimentoExecucaoController.update')
 }).prefix('procedimentoExecucao')
 
 

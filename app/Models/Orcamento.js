@@ -39,6 +39,10 @@ class Orcamento extends Model {
     pacientes() {
         return this.belongsTo('App/Models/Patient', 'paciente_id', 'id')
     }
+
+    saldoEspecialidade() {
+        return this.hasMany('App/Models/SaldoEspecialidade')
+    }
 }
 
 module.exports = Orcamento

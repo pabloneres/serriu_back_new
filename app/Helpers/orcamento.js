@@ -11,7 +11,7 @@ const Helpers = {
               dentista_id: item.dentista_id,
               faces: JSON.stringify(dente.faces),
               // detalhes,
-              status: 'aguardando',
+              status_pagamento: 'aguardando',
               // data_execucao: ,
               dente: dente.label,
               valor: item.valor
@@ -24,27 +24,27 @@ const Helpers = {
     procedimentosSerializados.forEach(item => {
       dentes.push(...item.dente)
     })
-    
-    
+
+
     const procedimentosGeraisSerializados = { //serialiazedDataGerais
       dente: procedimentos.map(item => {
         if (item.dentes.length === 0)
-        return {
-          // ...item,
-          // procedimento_nome: item.label,
-          // tabela_precos: item.nomeTabela,
-          // valor: item.valor,
-          // geral: true
+          return {
+            // ...item,
+            // procedimento_nome: item.label,
+            // tabela_precos: item.nomeTabela,
+            // valor: item.valor,
+            // geral: true
 
-          procedimento_id: item.id,
-          dentista_id: item.dentista_id,
-          // face: dente.faces,
-          // detalhes,
-          status: 'aguardando',
-          // data_execucao: ,
-          // dente: dente.label,
-          valor: item.valor
-        }
+            procedimento_id: item.id,
+            dentista_id: item.dentista_id,
+            // face: dente.faces,
+            // detalhes,
+            status_pagamento: 'aguardando',
+            // data_execucao: ,
+            // dente: dente.label,
+            valor: item.valor
+          }
       })
     }
 
