@@ -95,8 +95,8 @@ class PagamentoOrcamentoController {
 
       const pagamento = await PagamentoOrcamento.createMany(procedimento_ids)
 
-      await ProcedimentoExecucao.query().whereIn('id', ids_procedimento)
-        .update({ status_pagamento: 'pago' })
+      // await ProcedimentoExecucao.query().whereIn('id', ids_procedimento)
+      //   .update({ status_pagamento: 'pago' })
 
       await Orcamento.query().where('id', orcamento_id).update({
         status: 'andamento',
