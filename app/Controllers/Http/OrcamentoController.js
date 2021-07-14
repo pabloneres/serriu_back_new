@@ -116,9 +116,51 @@ class OrcamentoController {
   }
 
   async update({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    let data = request.all()
+
+    const procedimentos = Helpers.procedimentoHelper(data.procedimentos)
+    const orcamento = Helpers.orcamentoHelper(data)
+    const pagamento = Helpers.pagamentoHelper(data.pagamento)
+
+    let saveOrcamento = {
+      ...orcamento,
+      valor: procedimentos.reduce((a, b) => a + b.valor, 0),
+      restante: procedimentos.reduce((a, b) => a + b.valor, 0),
+      avaliador: data.avaliador,
+      valorDesconto: procedimentos.reduce((a, b) => a + b.valor, 0)
+    }
+
+    console.log(procedimentos)
+
+    saveOrcamento = await Orcamento.query().where('id', data.id).update(saveOrcamento, trx)
+
+
+    await ProcedimentoExecucao.query().where('orcamento_id', data.id).delete(trx)
+
+    let saveProcedimento = procedimentos.map(item => ({
+      ...item,
+      desconto: item.valor,
+      orcamento_id: data.id,
+      dentista_id: data.avaliador
+    }))
+    saveProcedimento = await ProcedimentoExecucao.createMany(saveProcedimento, trx)
+
+
+
+    await FormaPagamento.query().where('orcamento_id', data.id).delete(trx)
+    let savePagamento = {
+      ...pagamento,
+      orcamento_id: data.id
+    }
+    savePagamento = await FormaPagamento.create(savePagamento, trx)
+
+    await trx.commit();
+
   }
 
   async destroy({ params, request, response }) {
+    const orcamento = Orcamento.query().where('id', params.id).delete()
   }
 }
 

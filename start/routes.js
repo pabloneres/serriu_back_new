@@ -24,6 +24,7 @@ Route.post('/users', 'UserController.store')
 Route.group(() => {
   Route.get('/', 'OrcamentoController.index')
   Route.post('/', 'OrcamentoController.store')
+  Route.put('/:id', 'OrcamentoController.update')
 }).prefix('orcamentos').middleware(['auth'])
 
 Route.group(() => {

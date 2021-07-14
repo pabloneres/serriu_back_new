@@ -128,12 +128,20 @@ class ProcedimentoExecucaoController {
       .where('orcamento_id', data.orcamento_id)
       .andWhere('especialidade_id', procedimento.procedimento.especialidade_id).first()
 
-    await SaldoEspecialidade.query()
-      .where('id', saldo.id)
-      .update({
-        saldo: saldo.saldo - procedimento.desconto
-      })
+    if (!saldo) {
+      await SaldoEspecialidade.create({
+        orcamento_id: data.orcamento_id,
+        especialidade_id: procedimento.procedimento.especialidade_id,
+        saldo: 0 - procedimento.desconto,
+      }, trx)
+    } else {
+      await SaldoEspecialidade.query()
+        .where('id', saldo.id)
+        .update({
+          saldo: saldo.saldo - procedimento.desconto
+        })
 
+    }
 
     await Orcamento.query().where('id', orcamento.id).update({
       saldo: sobra
