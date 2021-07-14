@@ -50,15 +50,7 @@ class PatientController {
   async store ({ request, response }) {
     const data = request.all()
 
-    let [{'max(`id_access`)': max}] = await Database.from('patients').max('id_access')
-   
-    if (!max) {
-      data.id_access = 100000
-      max = 100000
-    }
-
-
-    const patient = await Patient.create({...data, id_access: max + 1})
+    const patient = await Patient.create(data)
 
     return patient
   }

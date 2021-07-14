@@ -4,7 +4,7 @@
 const Schema = use('Schema')
 
 class PatientSchema extends Schema {
-  up () {
+  up() {
     this.create('patients', (table) => {
       table.increments()
       table.string('firstName', 250).notNullable()
@@ -23,7 +23,7 @@ class PatientSchema extends Schema {
       table.string('rg_file', 250)
       table.string('cpf_file', 250)
       table.string('address_file', 250)
-      
+
       table.integer('email_verified').defaultTo(0)
       table.integer('cpf_verified').defaultTo(0)
       table.integer('rg_verified').defaultTo(0)
@@ -40,12 +40,11 @@ class PatientSchema extends Schema {
       table.string('marital_status', 254)
       table.string('status', 254)
       table.string('schooling', 254)
-      table.integer('id_access').unique().notNullable()
       table.timestamps()
     })
   }
 
-  down () {
+  down() {
     this.drop('patients')
   }
 }
