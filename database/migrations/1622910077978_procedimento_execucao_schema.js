@@ -30,7 +30,7 @@ class ProcedimentoExecucaoSchema extends Schema {
       table.string('detalhes', 5000)
 
       table.string('status_executado')
-      table.string('status_aprovado')
+      table.string('status_pagamento')
 
       table.string('data_execucao', 255)
 
