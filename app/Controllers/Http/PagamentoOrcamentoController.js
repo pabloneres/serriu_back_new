@@ -248,7 +248,7 @@ class PagamentoOrcamentoController {
         valor: Number(cobranca.entrada),
       }, trx)
 
-      const boletos = await BoletosPagamento.createMany(boleto, trx)
+      // const boletos = await BoletosPagamento.createMany(boleto, trx)
 
       // const teste = await ProcedimentoExecucao.query().whereIn('id', ids_procedimento)
       // .update({status: 'pago'})
@@ -262,7 +262,7 @@ class PagamentoOrcamentoController {
           valorParcela: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
           vencimento: cobranca.vencimento,
           description: cobranca.descricao,
-          referencia: 'Orçamento Nª' + orcamento_id,
+          referencia: orcamento_id,
         })
 
         await Orcamento.query().where('id', orcamento_id).update({

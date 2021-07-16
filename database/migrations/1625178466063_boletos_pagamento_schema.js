@@ -14,14 +14,14 @@ class BoletosPagamentoSchema extends Schema {
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
 
-      table
-        .integer('paciente_id')
-        .unsigned()
-        .notNullable()
-        .references('id')
-        .inTable('patients')
-        .onUpdate('CASCADE')
-        .onDelete('CASCADE')
+      // table
+      //   .integer('paciente_id')
+      //   .unsigned()
+      //   .notNullable()
+      //   .references('id')
+      //   .inTable('patients')
+      //   .onUpdate('CASCADE')
+      //   .onDelete('CASCADE')
 
 
       table.string('object')
