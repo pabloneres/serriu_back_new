@@ -3,16 +3,19 @@
 const Boleto = use('App/Models/BoletosPagamento')
 
 class AssaController {
-  async event({ request, response }) {
+  event({ request, response }) {
     const data = request.all()
     switch (data.event) {
       case 'PAYMENT_CREATED':
 
-        await Boleto.create({
+        Boleto.create({
           ...data.payment,
           orcamento_id: data.payment.externalReference,
+        }).then(() => {
+          response.status(200).send({ message: 'Criado' })
+        }).catch((error) => {
+          response.status(400).send({ message: error })
         })
-        response.status(200).send({ message: 'Criado' })
         return
 
       default:

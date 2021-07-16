@@ -24,40 +24,30 @@ function () {
   _createClass(AssaController, [{
     key: "event",
     value: function event(_ref) {
-      var request, response, data;
-      return regeneratorRuntime.async(function event$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              request = _ref.request, response = _ref.response;
-              data = request.all();
-              _context.t0 = data.event;
-              _context.next = _context.t0 === 'PAYMENT_CREATED' ? 5 : 9;
-              break;
+      var request = _ref.request,
+          response = _ref.response;
+      var data = request.all();
 
-            case 5:
-              _context.next = 7;
-              return regeneratorRuntime.awrap(Boleto.create(_objectSpread({}, data.payment, {
-                orcamento_id: data.payment.externalReference
-              })));
+      switch (data.event) {
+        case 'PAYMENT_CREATED':
+          Boleto.create(_objectSpread({}, data.payment, {
+            orcamento_id: data.payment.externalReference
+          })).then(function () {
+            response.status(200).send({
+              message: 'Criado'
+            });
+          })["catch"](function (error) {
+            response.status(400).send({
+              message: error
+            });
+          });
+          return;
 
-            case 7:
-              response.status(200).send({
-                message: 'Criado'
-              });
-              return _context.abrupt("return");
-
-            case 9:
-              response.status(200).send({
-                message: 'Recebido'
-              });
-
-            case 10:
-            case "end":
-              return _context.stop();
-          }
-        }
-      });
+        default:
+          response.status(200).send({
+            message: 'Recebido'
+          });
+      }
     }
   }]);
 
