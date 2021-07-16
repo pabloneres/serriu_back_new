@@ -5,8 +5,6 @@ const Boleto = use('App/Models/BoletosPagamento')
 class AssaController {
   event({ request, response }) {
     const data = request.all()
-
-
     switch (data.event) {
       case 'PAYMENT_CREATED':
 
