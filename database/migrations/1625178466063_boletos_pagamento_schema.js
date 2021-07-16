@@ -6,7 +6,6 @@ const Schema = use('Schema')
 class BoletosPagamentoSchema extends Schema {
   up() {
     this.create('boletos_pagamentos', (table) => {
-      table.increments()
 
       table.integer('orcamento_id')
         .references('id')
@@ -24,27 +23,35 @@ class BoletosPagamentoSchema extends Schema {
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
 
-      table.string('status')
-      table.float('value', 8, 2)
-      table.string('vencimento')
-      table.string('description')
 
-      table.string('numberParcela')
-
-
-
-      table.float('fatura_id', 8, 2)
-
+      table.string('object')
+      table.string('id').primary()
+      table.string('dateCreated')
       table.string('customer')
-      table.string('billingType').defaultTo('BOLETO')
-      table.string('dueDate')
-      table.string('externalReference')
-
-      table.string('invoiceUrl')
-      table.string('paymentDate')
+      table.string('installment')
       table.string('paymentLink')
-
-
+      table.float('value')
+      table.float('netValue')
+      table.float('originalValue')
+      table.float('interestValue')
+      table.string('description')
+      table.string('billingType')
+      table.string('status')
+      table.string('dueDate')
+      table.string('originalDueDate')
+      table.string('paymentDate')
+      table.string('clientPaymentDate')
+      table.string('invoiceUrl')
+      table.string('invoiceNumber')
+      table.string('externalReference')
+      table.boolean('deleted')
+      table.boolean('anticipated')
+      table.string('creditDate')
+      table.string('estimatedCreditDate')
+      table.string('bankSlipUrl')
+      table.string('lastInvoiceViewedDate')
+      table.string('lastBankSlipViewedDate')
+      table.boolean('postalService')
       table.timestamps()
     })
   }

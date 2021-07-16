@@ -7,6 +7,9 @@
 /**
  * Resourceful controller for interacting with pagamentoorcamentos
  */
+
+const Env = use('Env')
+
 const PagamentoOrcamento = use('App/Models/PagamentoOrcamento')
 const ProcedimentoExecucao = use('App/Models/ProcedimentoExecucao')
 const Orcamento = use('App/Models/Orcamento')
@@ -210,27 +213,31 @@ class PagamentoOrcamentoController {
       //   valor: Number(cobranca.entrada),
       // })
 
-      boleto.push({
-        orcamento_id,
-        paciente_id: orcamento.paciente_id,
-        status: gerarBoletos ? 'gerado' : 'salvo',
-        value: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
-        vencimento: String(moment(cobranca.vencimento).format()),
-        description: cobranca.descricao,
-        numberParcela: 1
-      })
+      ///////////////////////
 
-      for (let index = 1; index < cobranca.parcelas; index++) {
-        boleto.push({
-          orcamento_id,
-          paciente_id: orcamento.paciente_id,
-          status: gerarBoletos ? 'gerado' : 'salvo',
-          value: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
-          vencimento: String(moment(boleto[boleto.length - 1].vencimento).add(30, 'days').format()),
-          description: cobranca.descricao,
-          numberParcela: index + 1
-        })
-      }
+      // boleto.push({
+      //   orcamento_id,
+      //   paciente_id: orcamento.paciente_id,
+      //   status: gerarBoletos ? 'gerado' : 'salvo',
+      //   value: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
+      //   vencimento: String(moment(cobranca.vencimento).format()),
+      //   description: cobranca.descricao,
+      //   numberParcela: 1
+      // })
+
+      // for (let index = 1; index < cobranca.parcelas; index++) {
+      //   boleto.push({
+      //     orcamento_id,
+      //     paciente_id: orcamento.paciente_id,
+      //     status: gerarBoletos ? 'gerado' : 'salvo',
+      //     value: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
+      //     vencimento: String(moment(boleto[boleto.length - 1].vencimento).add(30, 'days').format()),
+      //     description: cobranca.descricao,
+      //     numberParcela: index + 1
+      //   })
+      // }
+
+      ////////////////////////////
 
       // return boleto
 
@@ -249,7 +256,7 @@ class PagamentoOrcamentoController {
       if (gerarBoletos) {
         const paciente = await Assas.returnClientOrCreate(orcamento.paciente_id)
 
-        await Assas.createPayment({
+        const { installment } = await Assas.createPayment({
           clientID: paciente.id,
           parcelas: cobranca.parcelas,
           valorParcela: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
@@ -259,6 +266,7 @@ class PagamentoOrcamentoController {
         })
 
         await Orcamento.query().where('id', orcamento_id).update({
+          carneLink: Env.get('CARNE_URL') + installment.split('_')[1],
           status: 'andamento',
           saldo: orcamento.valor,
           restante: 0

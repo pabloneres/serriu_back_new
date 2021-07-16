@@ -42,6 +42,8 @@ class OrcamentoSchema extends Schema {
 
       table.string('data_aprovacao', 255)
 
+      table.string('carneLink')
+
       table.float('valor', 8, 2)
       table.float('valorDesconto', 8, 2)
       table.float('restante', 8, 2)
