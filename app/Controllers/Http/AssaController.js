@@ -3,26 +3,35 @@
 const Boleto = use('App/Models/BoletosPagamento')
 
 class AssaController {
-  event({ request, response }) {
+  async event({ request, response }) {
     const data = request.all()
     switch (data.event) {
       case 'PAYMENT_CREATED':
-
-        Boleto.create({
-          ...data.payment,
-          orcamento_id: data.payment.externalReference,
-        }).then(() => {
-          response.status(200).send({ message: 'Criado' })
-        }).catch((error) => {
+        try {
+          const boleto = await Boleto.create({
+            ...data.payment,
+            orcamento_id: Number(data.payment.externalReference),
+          })
+          response.status(200).send({ message: boleto })
+          return
+        } catch (error) {
           response.status(400).send({ message: error })
-        })
-        return
-
+          return
+        }
+      // response.status(200).send({ message: boleto })
       default:
-        response.status(200).send({ message: 'Recebido' })
+        response.status(200).send({ message: 'Recebido mas não houve uma ação!' })
     }
   }
 
 }
 
 module.exports = AssaController
+
+
+const createBoleto = async (data) => {
+  return Boleto.create({
+    ...data.payment,
+    orcamento_id: data.payment.externalReference,
+  })
+}

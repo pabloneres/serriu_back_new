@@ -24,30 +24,50 @@ function () {
   _createClass(AssaController, [{
     key: "event",
     value: function event(_ref) {
-      var request = _ref.request,
-          response = _ref.response;
-      var data = request.all();
+      var request, response, data, boleto;
+      return regeneratorRuntime.async(function event$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              request = _ref.request, response = _ref.response;
+              data = request.all();
+              _context.t0 = data.event;
+              _context.next = _context.t0 === 'PAYMENT_CREATED' ? 5 : 17;
+              break;
 
-      switch (data.event) {
-        case 'PAYMENT_CREATED':
-          Boleto.create(_objectSpread({}, data.payment, {
-            orcamento_id: data.payment.externalReference
-          })).then(function () {
-            response.status(200).send({
-              message: 'Criado'
-            });
-          })["catch"](function (error) {
-            response.status(400).send({
-              message: error
-            });
-          });
-          return;
+            case 5:
+              _context.prev = 5;
+              _context.next = 8;
+              return regeneratorRuntime.awrap(Boleto.create(_objectSpread({}, data.payment, {
+                orcamento_id: Number(data.payment.externalReference)
+              })));
 
-        default:
-          response.status(200).send({
-            message: 'Recebido'
-          });
-      }
+            case 8:
+              boleto = _context.sent;
+              response.status(200).send({
+                message: boleto
+              });
+              return _context.abrupt("return");
+
+            case 13:
+              _context.prev = 13;
+              _context.t1 = _context["catch"](5);
+              response.status(400).send({
+                message: _context.t1
+              });
+              return _context.abrupt("return");
+
+            case 17:
+              response.status(200).send({
+                message: 'Recebido mas não houve uma ação!'
+              });
+
+            case 18:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, null, null, [[5, 13]]);
     }
   }]);
 
@@ -55,3 +75,20 @@ function () {
 }();
 
 module.exports = AssaController;
+
+var createBoleto = function createBoleto(data) {
+  return regeneratorRuntime.async(function createBoleto$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          return _context2.abrupt("return", Boleto.create(_objectSpread({}, data.payment, {
+            orcamento_id: data.payment.externalReference
+          })));
+
+        case 1:
+        case "end":
+          return _context2.stop();
+      }
+    }
+  });
+};
