@@ -14,6 +14,7 @@ const BoletosPagamento = use('App/Models/BoletosPagamento')
 const FormaPagamento = use('App/Models/FormaPagamento')
 const SaldoEspecialidade = use('App/Models/SaldoEspecialidade')
 const Database = use('Database')
+const Assas = use('App/Helpers/assas')
 
 //  const HelpersComissao = use('App/Helpers/comissao')
 const moment = require('moment')
@@ -53,8 +54,8 @@ class PagamentoOrcamentoController {
    * @param {Response} ctx.response
    */
   async store({ request, response }) {
-    const trx = await Database.beginTransaction()
     // return request.all()
+    const trx = await Database.beginTransaction()
     let {
       condicao,
       orcamento_id,
@@ -246,6 +247,17 @@ class PagamentoOrcamentoController {
       // .update({status: 'pago'})
 
       if (gerarBoletos) {
+        const paciente = await Assas.returnClientOrCreate(orcamento.paciente_id)
+
+        await Assas.createPayment({
+          clientID: paciente.id,
+          parcelas: cobranca.parcelas,
+          valorParcela: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
+          vencimento: cobranca.vencimento,
+          description: cobranca.descricao,
+          referencia: 'Orçamento Nª' + orcamento_id,
+        })
+
         await Orcamento.query().where('id', orcamento_id).update({
           status: 'andamento',
           saldo: orcamento.valor,

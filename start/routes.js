@@ -176,3 +176,14 @@ Route.group(() => {
 Route.group(() => {
   Route.post('/', 'PermissaoController.hasPermission')
 }).prefix('permissaoCode').middleware(['auth'])
+
+
+Route.group(() => {
+  Route.get('/:id', 'TesteController.index')
+  Route.post('/', 'TesteController.createBoleto')
+}).prefix('teste')
+
+
+Route.group(() => {
+  Route.post('/', 'AssaController.event')
+}).prefix('assas')

@@ -82,6 +82,7 @@ class ProcedimentoExecucaoController {
 
     if (!permitido) {
       response.status(401).send({ message: 'Desconto não autorizado' })
+      return
     }
 
     await Orcamento.query().where('id', orcamento.id).update({
