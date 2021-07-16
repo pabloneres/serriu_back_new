@@ -24,7 +24,7 @@ class AssaController {
           response.status(200).send({ message: boleto })
           return
         } catch (error) {
-          response.status(400).send({ message: error })
+          response.status(401).send({ message: error })
           return
         }
       // response.status(200).send({ message: boleto })

@@ -70,7 +70,7 @@ function () {
             case 19:
               _context.prev = 19;
               _context.t1 = _context["catch"](11);
-              response.status(400).send({
+              response.status(401).send({
                 message: _context.t1
               });
               return _context.abrupt("return");
