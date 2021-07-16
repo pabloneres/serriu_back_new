@@ -7,8 +7,8 @@ class AssaController {
   async event({ request, response }) {
     const data = request.all()
 
-    response.status(200).send({ message: 'ok' })
-    return
+    // response.status(200).send({ message: 'ok' })
+    return { messase: 'ok' }
 
     const orcamento = await Orcamento.query().where('parcelamento_id', data.payment.installment).first()
 
