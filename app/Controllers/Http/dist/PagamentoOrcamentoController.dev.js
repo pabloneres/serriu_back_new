@@ -356,6 +356,7 @@ function () {
               installment = _ref4.installment;
               _context4.next = 53;
               return regeneratorRuntime.awrap(Orcamento.query().where('id', orcamento_id).update({
+                parcelamento_id: installment,
                 carneLink: Env.get('CARNE_URL') + installment.split('_')[1],
                 status: 'andamento',
                 saldo: orcamento.valor,

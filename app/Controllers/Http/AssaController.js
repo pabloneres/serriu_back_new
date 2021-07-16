@@ -1,16 +1,25 @@
 'use strict'
 
 const Boleto = use('App/Models/BoletosPagamento')
+const Orcamento = use('App/Models/Orcamento')
 
 class AssaController {
   async event({ request, response }) {
     const data = request.all()
+
+    const orcamento = await Orcamento.query().where('parcelamento_id', data.payment.installment).first()
+
+    if (!orcamento) {
+      response.status(400).send({ message: 'Orcamento não encontrado' })
+      return
+    }
+
     switch (data.event) {
       case 'PAYMENT_CREATED':
         try {
           const boleto = await Boleto.create({
             ...data.payment,
-            orcamento_id: Number(data.payment.externalReference),
+            orcamento_id: orcamento.id,
           })
           response.status(200).send({ message: boleto })
           return
@@ -27,11 +36,3 @@ class AssaController {
 }
 
 module.exports = AssaController
-
-
-const createBoleto = async (data) => {
-  return Boleto.create({
-    ...data.payment,
-    orcamento_id: data.payment.externalReference,
-  })
-}
