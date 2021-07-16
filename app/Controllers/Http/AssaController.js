@@ -7,13 +7,13 @@ class AssaController {
   async event({ request, response }) {
     const data = request.all()
 
-    // response.status(200).send({ message: 'ok' })
-    return { messase: 'ok' }
+    // // response.status(200).send({ message: 'ok' })
+    // return { messase: 'ok' }
 
     const orcamento = await Orcamento.query().where('parcelamento_id', data.payment.installment).first()
 
     if (!orcamento) {
-      response.status(400).send({ message: 'Orcamento não encontrado' })
+      response.status(401).send({ message: 'Orcamento não encontrado' })
       return
     }
 

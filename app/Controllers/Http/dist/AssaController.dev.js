@@ -31,63 +31,63 @@ function () {
           switch (_context.prev = _context.next) {
             case 0:
               request = _ref.request, response = _ref.response;
-              data = request.all(); // response.status(200).send({ message: 'ok' })
+              data = request.all(); // // response.status(200).send({ message: 'ok' })
+              // return { messase: 'ok' }
 
-              return _context.abrupt("return", {
-                messase: 'ok'
-              });
+              _context.next = 4;
+              return regeneratorRuntime.awrap(Orcamento.query().where('parcelamento_id', data.payment.installment).first());
 
-            case 5:
+            case 4:
               orcamento = _context.sent;
 
               if (orcamento) {
-                _context.next = 9;
+                _context.next = 8;
                 break;
               }
 
-              response.status(400).send({
+              response.status(401).send({
                 message: 'Orcamento não encontrado'
               });
               return _context.abrupt("return");
 
-            case 9:
+            case 8:
               _context.t0 = data.event;
-              _context.next = _context.t0 === 'PAYMENT_CREATED' ? 12 : 24;
+              _context.next = _context.t0 === 'PAYMENT_CREATED' ? 11 : 23;
               break;
 
-            case 12:
-              _context.prev = 12;
-              _context.next = 15;
+            case 11:
+              _context.prev = 11;
+              _context.next = 14;
               return regeneratorRuntime.awrap(Boleto.create(_objectSpread({}, data.payment, {
                 orcamento_id: orcamento.id
               })));
 
-            case 15:
+            case 14:
               boleto = _context.sent;
               response.status(200).send({
                 message: boleto
               });
               return _context.abrupt("return");
 
-            case 20:
-              _context.prev = 20;
-              _context.t1 = _context["catch"](12);
+            case 19:
+              _context.prev = 19;
+              _context.t1 = _context["catch"](11);
               response.status(401).send({
                 message: _context.t1
               });
               return _context.abrupt("return");
 
-            case 24:
+            case 23:
               response.status(200).send({
                 message: 'Recebido mas não houve uma ação!'
               });
 
-            case 25:
+            case 24:
             case "end":
               return _context.stop();
           }
         }
-      }, null, null, [[12, 20]]);
+      }, null, null, [[11, 19]]);
     }
   }]);
 
