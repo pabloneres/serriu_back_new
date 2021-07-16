@@ -262,7 +262,7 @@ class PagamentoOrcamentoController {
           valorParcela: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
           vencimento: cobranca.vencimento,
           description: cobranca.descricao,
-          referencia: orcamento_id,
+          externalReference: orcamento_id,
         })
 
         await Orcamento.query().where('id', orcamento_id).update({

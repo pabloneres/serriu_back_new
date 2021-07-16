@@ -53,8 +53,9 @@ const Assas = {
     valorParcela,
     vencimento,
     description,
-    referencia
+    externalReference
   }) {
+    console.log(externalReference)
     return api.post(`/payments`, {
       customer: clientID,
       billingType,
@@ -62,7 +63,7 @@ const Assas = {
       installmentValue: valorParcela,
       dueDate: vencimento,
       description,
-      referencia
+      externalReference
     })
   },
 }
