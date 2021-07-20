@@ -53,7 +53,7 @@ function () {
                 builder["with"]('especialidades');
                 builder["with"]('procedimentos');
               })["with"]('boletos', function (builder) {
-                builder.orderBy('id', 'desc');
+                builder.orderBy('invoiceNumber', 'cres');
               }).orderBy('id', 'desc').fetch());
 
             case 5:

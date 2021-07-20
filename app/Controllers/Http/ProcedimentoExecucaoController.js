@@ -33,7 +33,9 @@ class ProcedimentoExecucaoController {
       .with('pagamento')
       .with('pagamentos.especialidades')
       .with('saldoEspecialidade')
-      .with('boletos')
+      .with('boletos', builder => {
+        builder.orderBy('invoiceNumber', 'cres')
+      })
       .orderBy('id', 'desc')
       .fetch()
 
