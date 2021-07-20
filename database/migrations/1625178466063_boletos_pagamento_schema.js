@@ -38,6 +38,7 @@ class BoletosPagamentoSchema extends Schema {
       table.string('billingType')
       table.string('status')
       table.string('dueDate')
+      table.string('confirmedDate')
       table.string('originalDueDate')
       table.string('paymentDate')
       table.string('clientPaymentDate')

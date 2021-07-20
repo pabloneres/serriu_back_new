@@ -28,7 +28,9 @@ class OrcamentoController {
           builder.with('especialidades')
           builder.with('procedimentos')
         })
-        .with('boletos')
+        .with('boletos', builder => {
+          builder.orderBy('id', 'desc')
+        })
         .orderBy('id', 'desc')
         .fetch()
 
