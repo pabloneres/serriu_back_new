@@ -123,6 +123,23 @@ var Assas = {
         }
       }
     });
+  },
+  paymentCash: function paymentCash(id, value) {
+    return regeneratorRuntime.async(function paymentCash$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            return _context5.abrupt("return", api.post("/payments/".concat(id, "/receiveInCash"), {
+              paymentDate: new Date(),
+              value: value
+            }));
+
+          case 1:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    });
   }
 };
 module.exports = Assas;

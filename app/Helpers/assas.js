@@ -66,6 +66,13 @@ const Assas = {
       externalReference
     })
   },
+
+  async paymentCash(id, value) {
+    return api.post(`/payments/${id}/receiveInCash`, {
+      paymentDate: new Date(),
+      value,
+    })
+  }
 }
 
 module.exports = Assas

@@ -148,4 +148,5 @@ Route.group(function () {
 Route.group(function () {
   Route.post('/', 'AssaController.event');
   Route.post('/clean', 'AssaController.clean');
+  Route.post('/paymentCash/:id', 'AssaController.paymentCash');
 }).prefix('assas');

@@ -187,4 +187,5 @@ Route.group(() => {
 Route.group(() => {
   Route.post('/', 'AssaController.event')
   Route.post('/clean', 'AssaController.clean')
+  Route.post('/paymentCash/:id', 'AssaController.paymentCash')
 }).prefix('assas')

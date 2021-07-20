@@ -2,6 +2,7 @@
 
 const Boleto = use('App/Models/BoletosPagamento')
 const Orcamento = use('App/Models/Orcamento')
+const Assas = use('App/Helpers/assas')
 
 class AssaController {
   async event({ request, response }) {
@@ -32,6 +33,14 @@ class AssaController {
         response.status(200).send({ message: 'Recebido mas não houve uma ação!' })
         return
     }
+  }
+
+  async paymentCash({ request, response, params }) {
+    const id = params.id
+
+    const boleto = await Boleto.query('id', id)
+
+    await Assas.paymentCash(id, boleto.value)
   }
 
   async clean({ request, response }) {

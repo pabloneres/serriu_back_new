@@ -14,6 +14,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var Boleto = use('App/Models/BoletosPagamento');
 var Orcamento = use('App/Models/Orcamento');
+var Assas = use('App/Helpers/assas');
 
 var AssaController =
 /*#__PURE__*/
@@ -89,22 +90,47 @@ function () {
       }, null, null, [[5, 19]]);
     }
   }, {
-    key: "clean",
-    value: function clean(_ref2) {
-      var request, response;
-      return regeneratorRuntime.async(function clean$(_context2) {
+    key: "paymentCash",
+    value: function paymentCash(_ref2) {
+      var request, response, params, id, boleto;
+      return regeneratorRuntime.async(function paymentCash$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              request = _ref2.request, response = _ref2.response;
+              request = _ref2.request, response = _ref2.response, params = _ref2.params;
+              id = params.id;
+              _context2.next = 4;
+              return regeneratorRuntime.awrap(Boleto.query('id', id));
+
+            case 4:
+              boleto = _context2.sent;
+              _context2.next = 7;
+              return regeneratorRuntime.awrap(Assas.paymentCash(id, boleto.value));
+
+            case 7:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      });
+    }
+  }, {
+    key: "clean",
+    value: function clean(_ref3) {
+      var request, response;
+      return regeneratorRuntime.async(function clean$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              request = _ref3.request, response = _ref3.response;
               response.status(200).send({
                 message: 'Fila foi zerada'
               });
-              return _context2.abrupt("return");
+              return _context3.abrupt("return");
 
             case 3:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
         }
       });
