@@ -10,7 +10,7 @@ class AssaController {
 
     switch (data.event) {
       case 'PAYMENT_RECEIVED':
-        let boleto = await Boleto.query().where('id', id).first()
+        let boleto = await Boleto.query().where('id', data.payment.id).first()
 
         if (!boleto) {
           response.status(200).send({ message: 'Boleto não encontrado' })
@@ -19,7 +19,7 @@ class AssaController {
 
         await boleto.update({ ...data.payment })
 
-        response.status(200).send({ message: 'Pagamento confirmado em dinheiro' })
+        response.status(200).send({ message: `Pagamento confirmado em dinheiro, ID: ${boleto.id}` })
 
         return
       case 'PAYMENT_CREATED':

@@ -40,7 +40,7 @@ function () {
 
             case 5:
               _context.next = 7;
-              return regeneratorRuntime.awrap(Boleto.query().where('id', id).first());
+              return regeneratorRuntime.awrap(Boleto.query().where('id', data.payment.id).first());
 
             case 7:
               boleto = _context.sent;
@@ -61,7 +61,7 @@ function () {
 
             case 13:
               response.status(200).send({
-                message: 'Pagamento confirmado em dinheiro'
+                message: "Pagamento confirmado em dinheiro, ID: ".concat(boleto.id)
               });
               return _context.abrupt("return");
 
