@@ -17,7 +17,7 @@ class AssaController {
           return
         }
 
-        await boleto.update({ ...data.payment })
+        await Boleto.query().where('id', data.payment.id).update({ ...data.payment })
 
         response.status(200).send({ message: `Pagamento confirmado em dinheiro, ID: ${boleto.id}` })
 

@@ -57,7 +57,7 @@ function () {
 
             case 11:
               _context.next = 13;
-              return regeneratorRuntime.awrap(boleto.update(_objectSpread({}, data.payment)));
+              return regeneratorRuntime.awrap(Boleto.query().where('id', data.payment.id).update(_objectSpread({}, data.payment)));
 
             case 13:
               response.status(200).send({
