@@ -1,7 +1,5 @@
 'use strict';
 
-function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
-
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -93,12 +91,12 @@ function () {
   }, {
     key: "clean",
     value: function clean(_ref2) {
+      var request, response;
       return regeneratorRuntime.async(function clean$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              _objectDestructuringEmpty(_ref2);
-
+              request = _ref2.request, response = _ref2.response;
               response.status(200).send({
                 message: 'ok'
               });

@@ -34,7 +34,7 @@ class AssaController {
     }
   }
 
-  async clean({ }) {
+  async clean({ request, response }) {
     response.status(200).send({ message: 'ok' })
     return
   }
