@@ -38,7 +38,8 @@ class AssaController {
   async paymentCash({ request, response, params }) {
     const id = params.id
 
-    const boleto = await Boleto.query('id', id)
+    let boleto = await Boleto.query().where('id', id).first()
+    boleto = boleto.toJSON()
 
     await Assas.paymentCash(id, boleto.value)
   }

@@ -100,14 +100,15 @@ function () {
               request = _ref2.request, response = _ref2.response, params = _ref2.params;
               id = params.id;
               _context2.next = 4;
-              return regeneratorRuntime.awrap(Boleto.query('id', id));
+              return regeneratorRuntime.awrap(Boleto.query().where('id', id).first());
 
             case 4:
               boleto = _context2.sent;
-              _context2.next = 7;
+              boleto = boleto.toJSON();
+              _context2.next = 8;
               return regeneratorRuntime.awrap(Assas.paymentCash(id, boleto.value));
 
-            case 7:
+            case 8:
             case "end":
               return _context2.stop();
           }
