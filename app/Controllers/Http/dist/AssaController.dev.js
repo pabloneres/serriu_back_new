@@ -98,7 +98,7 @@ function () {
             case 0:
               request = _ref2.request, response = _ref2.response;
               response.status(200).send({
-                message: 'ok'
+                message: 'Fila foi zerada'
               });
               return _context2.abrupt("return");
 

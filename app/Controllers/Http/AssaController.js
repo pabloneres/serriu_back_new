@@ -35,7 +35,7 @@ class AssaController {
   }
 
   async clean({ request, response }) {
-    response.status(200).send({ message: 'ok' })
+    response.status(200).send({ message: 'Fila foi zerada' })
     return
   }
 
