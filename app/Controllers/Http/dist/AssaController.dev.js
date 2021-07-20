@@ -26,7 +26,8 @@ function () {
   _createClass(AssaController, [{
     key: "event",
     value: function event(_ref) {
-      var request, response, data, orcamento, boleto;
+      var request, response, data, boleto, orcamento, _boleto;
+
       return regeneratorRuntime.async(function event$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -34,19 +35,46 @@ function () {
               request = _ref.request, response = _ref.response;
               data = request.all();
               _context.t0 = data.event;
-              _context.next = _context.t0 === 'PAYMENT_CREATED' ? 5 : 23;
+              _context.next = _context.t0 === 'PAYMENT_RECEIVED' ? 5 : _context.t0 === 'PAYMENT_CREATED' ? 15 : 33;
               break;
 
             case 5:
-              _context.prev = 5;
-              _context.next = 8;
+              _context.next = 7;
+              return regeneratorRuntime.awrap(Boleto.query().where('id', id).first());
+
+            case 7:
+              boleto = _context.sent;
+
+              if (boleto) {
+                _context.next = 11;
+                break;
+              }
+
+              response.status(200).send({
+                message: 'Boleto não encontrado'
+              });
+              return _context.abrupt("return");
+
+            case 11:
+              _context.next = 13;
+              return regeneratorRuntime.awrap(boleto.update(_objectSpread({}, data.payment)));
+
+            case 13:
+              response.status(200).send({
+                message: 'Pagamento confirmado em dinheiro'
+              });
+              return _context.abrupt("return");
+
+            case 15:
+              _context.prev = 15;
+              _context.next = 18;
               return regeneratorRuntime.awrap(Orcamento.query().where('parcelamento_id', data.payment.installment).first());
 
-            case 8:
+            case 18:
               orcamento = _context.sent;
 
               if (orcamento) {
-                _context.next = 12;
+                _context.next = 22;
                 break;
               }
 
@@ -55,39 +83,39 @@ function () {
               });
               return _context.abrupt("return");
 
-            case 12:
-              _context.next = 14;
+            case 22:
+              _context.next = 24;
               return regeneratorRuntime.awrap(Boleto.create(_objectSpread({}, data.payment, {
                 orcamento_id: orcamento.id
               })));
 
-            case 14:
-              boleto = _context.sent;
+            case 24:
+              _boleto = _context.sent;
               response.status(200).send({
-                message: boleto
+                message: _boleto
               });
               return _context.abrupt("return");
 
-            case 19:
-              _context.prev = 19;
-              _context.t1 = _context["catch"](5);
+            case 29:
+              _context.prev = 29;
+              _context.t1 = _context["catch"](15);
               response.status(401).send({
                 message: _context.t1
               });
               return _context.abrupt("return");
 
-            case 23:
+            case 33:
               response.status(200).send({
                 message: 'Recebido mas não houve uma ação!'
               });
               return _context.abrupt("return");
 
-            case 25:
+            case 35:
             case "end":
               return _context.stop();
           }
         }
-      }, null, null, [[5, 19]]);
+      }, null, null, [[15, 29]]);
     }
   }, {
     key: "paymentCash",

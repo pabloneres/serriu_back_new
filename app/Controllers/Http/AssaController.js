@@ -9,6 +9,19 @@ class AssaController {
     const data = request.all()
 
     switch (data.event) {
+      case 'PAYMENT_RECEIVED':
+        let boleto = await Boleto.query().where('id', id).first()
+
+        if (!boleto) {
+          response.status(200).send({ message: 'Boleto não encontrado' })
+          return
+        }
+
+        await boleto.update({ ...data.payment })
+
+        response.status(200).send({ message: 'Pagamento confirmado em dinheiro' })
+
+        return
       case 'PAYMENT_CREATED':
         try {
           const orcamento = await Orcamento.query().where('parcelamento_id', data.payment.installment).first()
