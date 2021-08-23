@@ -10,7 +10,7 @@ class Command extends MqttListener {
   *
   * @returns {string}
   */
-  get subscription () {
+  get subscription() {
     return 'serriu/comando';
   }
 
@@ -20,7 +20,7 @@ class Command extends MqttListener {
   * @param {String} message Data of the message
   * @param {String[]} wildcardMatches Wildcard matches in your subscription string
   */
-  async handleMessage (message, wildcardMatches) {
+  async handleMessage(message, wildcardMatches) {
     try {
       Event.fire('ESP:Command', message)
     } catch (error) {

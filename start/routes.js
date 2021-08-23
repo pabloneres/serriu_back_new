@@ -161,6 +161,10 @@ Route.group(() => {
   Route.delete('/:id', 'PagamentoOrcamentoController.destroy')
 }).prefix('pagamento')
 
+Route.post('/pagamento_total', 'PagamentoOrcamentoController.total')
+Route.post('/pagamento_boleto', 'PagamentoOrcamentoController.boleto')
+Route.post('/negociacao', 'PagamentoOrcamentoController.negociacao')
+
 Route.group(() => {
   Route.get('/', 'MetodosPagamentoController.index')
   Route.post('/', 'MetodosPagamentoController.store')
@@ -170,6 +174,7 @@ Route.group(() => {
   Route.get('/', 'ProcedimentoExecucaoController.index')
   Route.post('/', 'ProcedimentoExecucaoController.store')
   Route.put('/:id', 'ProcedimentoExecucaoController.update')
+  Route.delete('/:id', 'ProcedimentoExecucaoController.destroy')
 }).prefix('procedimentoExecucao')
 
 
@@ -189,3 +194,36 @@ Route.group(() => {
   Route.post('/clean', 'AssaController.clean')
   Route.post('/paymentCash/:id', 'AssaController.paymentCash')
 }).prefix('assas')
+
+Route.group(() => {
+  Route.get('/', 'EspecialidadeDentistaController.index')
+  Route.post('/:id', 'EspecialidadeDentistaController.store')
+}).prefix('especialidade_config')
+
+Route.group(() => {
+  Route.get('/', 'ComissaoConfigController.index')
+  Route.post('/:id', 'ComissaoConfigController.store')
+  Route.get('/:id', 'ComissaoConfigController.show')
+}).prefix('comissao_config')
+
+Route.group(() => {
+  Route.get('/', 'ComissaoController.index')
+  Route.get('/:id', 'ComissaoController.show')
+  Route.put('/:id', 'ComissaoController.update')
+}).prefix('comissoes')
+
+Route.group(() => {
+  Route.get('/', 'FichaClinicaController.index')
+  Route.get('/:id', 'FichaClinicaController.show')
+  Route.post('/updateTitular', 'FichaClinicaController.updateTitular')
+}).prefix('fichaClinica')
+
+Route.group(() => {
+  Route.get('/', 'NegociacaoController.index')
+  Route.get('/:id', 'NegociacaoController.show')
+  Route.put('/:id', 'NegociacaoController.update')
+}).prefix('faturamento')
+
+Route.group(() => {
+  Route.get('/:id', 'NegociacaoBoletoController.update')
+}).prefix('negociacao_boleto')

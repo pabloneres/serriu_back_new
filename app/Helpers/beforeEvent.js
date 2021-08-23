@@ -2,7 +2,7 @@
 
 class beforeEvent {
 
-  async action () {
+  async action() {
     console.log('teste')
   }
 

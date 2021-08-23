@@ -11,8 +11,13 @@ const ProcedimentoExecucao = use('App/Models/ProcedimentoExecucao')
 const User = use('App/Models/User')
 const Orcamento = use('App/Models/Orcamento')
 const DepartmentClinc = use('App/Models/DepartmentClinc')
-const SaldoEspecialidade = use('App/Models/SaldoEspecialidade')
 const Database = use('Database')
+const ComissaoHelper = use('App/Helpers/comissao')
+const EspecialidadeHelper = use('App/Helpers/especialidade')
+const ClinicConfig = use('App/Models/ClinicConfig')
+const FormaPagamento = use('App/Models/FormaPagamento')
+const ComissaoBoleto = use('App/Helpers/comissaoBoleto')
+const Negociacao = use('App/Models/Negociacao')
 
 class ProcedimentoExecucaoController {
   async index({ request, response, view }) {
@@ -107,65 +112,110 @@ class ProcedimentoExecucaoController {
   }
 
   async update({ params, request, response }) {
+    // return request.all()
     const trx = await Database.beginTransaction();
     const data = request.all()
 
-    const orcamento = await Orcamento.findBy('id', data.orcamento_id)
+    let orcamento = await Orcamento.query().where('id', data.orcamento_id).first() //busca o orcamento
+    orcamento = orcamento.toJSON()
 
     let procedimento = await ProcedimentoExecucao.query()
       .where('id', data.procedimento_id)
-      .with('procedimento.especialidade')
+      .with('procedimento')
       .first()
+    procedimento = procedimento.toJSON() // busca o procedimento a executar
 
-    procedimento = procedimento.toJSON()
+    let clinicConfig = await EspecialidadeHelper.clinicConfig(orcamento.clinic_id) // busca a configuração da clinica
 
-    let sobra = Number(orcamento.saldo) - Number(procedimento.desconto)
+    let negociacao = await Negociacao.query().where('id', procedimento.negociacao_id).first()  // busca a negociação
+    negociacao = negociacao.toJSON()
+
+    if (negociacao.formaPagamento === 'boleto' && clinicConfig.comissao_boleto === 'orcamento') {
+      await EspecialidadeHelper.verifyTitularBoletoOrcamento({
+        orcamento: orcamento,
+        especialidade_id: procedimento.especialidade_id,
+        dentista_id: data.dentista_id
+      })
+    } else {
+      await EspecialidadeHelper.verifyTitularBoleto({
+        orcamento: orcamento,
+        especialidade_id: procedimento.especialidade_id,
+        dentista_id: data.dentista_id
+      }) // se não tiver um titular na especialidade ele adiciona um titular
+    }
+
+    let sobra = Number(orcamento.saldo) - Number(procedimento.desconto) // restante do orcamento
+
+    await Orcamento.query().where('id', orcamento.id).update({
+      saldo: sobra
+    }, trx) // atualiza o restante do orçamento
+
 
     await ProcedimentoExecucao.query().where('id', procedimento.id).update({
       status_execucao: 'executado',
       detalhes: data.detalhes
-    }, trx)
+    }, trx) // atualiza o status de execução do procedimento
 
-    const saldo = await SaldoEspecialidade
-      .query()
-      .where('orcamento_id', data.orcamento_id)
-      .andWhere('especialidade_id', procedimento.procedimento.especialidade_id).first()
+    //////////////////////
 
-    if (!saldo) {
-      await SaldoEspecialidade.create({
-        orcamento_id: data.orcamento_id,
-        especialidade_id: procedimento.procedimento.especialidade_id,
-        saldo: 0 - procedimento.desconto,
-      }, trx)
-    } else {
-      await SaldoEspecialidade.query()
-        .where('id', saldo.id)
-        .update({
-          saldo: saldo.saldo - procedimento.desconto
+    if (negociacao.formaPagamento === 'boleto') { // se a negociação for via boleto
+      if (!clinicConfig.workBoletos) {
+        return
+      } // se a negociação for via boleto e a clinica nao trabalha com boletos ele para a função
+
+      if (clinicConfig.comissao_boleto === 'procedimento') {
+        await ComissaoHelper.executadoProcedimento({
+          procedimento,
+          orcamento,
+          isBoleto: true,
+          formaPagamento: negociacao.formaPagamento
         })
-
+      }
+      if (clinicConfig.comissao_boleto === 'concluido') {
+        await ComissaoHelper.executadoProcedimento({
+          procedimento,
+          orcamento,
+          isBoleto: true,
+          formaPagamento: negociacao.formaPagamento
+        })
+      }
+    } else {
+      await ComissaoHelper.executadoProcedimento({
+        procedimento,
+        orcamento,
+        isBoleto: false,
+        formaPagamento: negociacao.formaPagamento
+      }) // se nao for via boleto, ele executa a função para pagar comissao do executor
     }
 
-    await Orcamento.query().where('id', orcamento.id).update({
-      saldo: sobra
-    }, trx)
-
-    // const [{ "count(*)": totalExecutado }] = await Database.table('procedimentos_orcamentos').count('*').where('orcamento_id', id).andWhere('status', 'executado')
-
-    // if(totalAberto === 0) {
-    //   await Orcamento.query().where('id', id).update({
-    //     status: 'finalizado'
-    //   }, trx)
-
-    //   await ComissaoDentista.query().where('orcamento_id', orcamento.id).update({
-    //     status_comissao: 'pagar'
-    //   })
-    // }
+    await EspecialidadeHelper.updateValuesExecutado({
+      especialidade_id: procedimento.especialidade_id,
+      orcamento,
+      procedimento
+    })
 
     trx.commit()
+
   }
 
   async destroy({ params, request, response }) {
+    let procedimento = await ProcedimentoExecucao.query()
+      .where('id', params.id).first()
+    procedimento = procedimento.toJSON()
+
+    let orcamento = await Orcamento.query()
+      .where('id', procedimento.orcamento_id).first()
+    orcamento = orcamento.toJSON()
+
+    await ProcedimentoExecucao.query()
+      .where('id', params.id).delete()
+
+    await Orcamento.query()
+      .where('id', orcamento.id).update({
+        valor: orcamento.valor - procedimento.valor,
+        valorDesconto: orcamento.valorDesconto - procedimento.valor,
+        restante: orcamento.restante - procedimento.valor
+      })
   }
 }
 

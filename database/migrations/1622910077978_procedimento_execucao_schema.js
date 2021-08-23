@@ -17,6 +17,15 @@ class ProcedimentoExecucaoSchema extends Schema {
         .onDelete('CASCADE')
 
       table
+        .integer('especialidade_id')
+        .unsigned()
+        .notNullable()
+        .references('id')
+        .inTable('tabela_especialidades')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE')
+
+      table
         .integer('procedimento_id')
         .unsigned()
         .notNullable()
@@ -25,11 +34,19 @@ class ProcedimentoExecucaoSchema extends Schema {
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
 
+      table
+        .integer('negociacao_id')
+        .unsigned()
+        .references('id')
+        .inTable('negociacaos')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE')
+
       table.json('faces').defaultTo(null)
 
       table.string('detalhes', 5000)
 
-      table.string('status_execucao')
+      table.string('status_execucao').defaultTo('aprovado') //salvo //aprovado //pendente //executado
       table.string('status_pagamento')
 
       table.string('data_execucao', 255)
@@ -42,8 +59,14 @@ class ProcedimentoExecucaoSchema extends Schema {
 
       table
         .integer('dentista_id')
-        .unsigned()
         .notNullable()
+        .references('id')
+        .inTable('users')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE')
+
+      table
+        .integer('titular')
         .references('id')
         .inTable('users')
         .onUpdate('CASCADE')

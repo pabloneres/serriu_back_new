@@ -8,6 +8,8 @@
  * Resourceful controller for interacting with pagamentoorcamentos
  */
 
+const ComissaoConfig = use('App/Models/ComissaoConfig')
+
 const Env = use('Env')
 
 const PagamentoOrcamento = use('App/Models/PagamentoOrcamento')
@@ -15,9 +17,18 @@ const ProcedimentoExecucao = use('App/Models/ProcedimentoExecucao')
 const Orcamento = use('App/Models/Orcamento')
 const BoletosPagamento = use('App/Models/BoletosPagamento')
 const FormaPagamento = use('App/Models/FormaPagamento')
-const SaldoEspecialidade = use('App/Models/SaldoEspecialidade')
 const Database = use('Database')
 const Assas = use('App/Helpers/assas')
+const ComissaoHelper = use('App/Helpers/comissao')
+const ComissaoBoleto = use('App/Helpers/comissaoBoleto')
+const EspecialidadeHelper = use('App/Helpers/especialidade')
+const ClinicConfig = use('App/Models/ClinicConfig')
+const Negociacao = use('App/Models/Negociacao')
+const EspecialidadeNegociacao = use('App/Models/EspecialidadeNegociacao')
+const PagamentosNegociacao = use('App/Models/PagamentosNegociacao')
+const PagamentoHelper = use('App/Helpers/pagamento')
+const LabNegociacao = use('App/Models/LabNegociacao')
+
 
 //  const HelpersComissao = use('App/Helpers/comissao')
 const moment = require('moment')
@@ -77,15 +88,9 @@ class PagamentoOrcamentoController {
       let orcamentoRestante = orcamento.restante
 
       const ids_procedimento = procedimento_ids.map(item => item.id)
-
       procedimento_ids = procedimento_ids.map(item => {
 
-        console.log(orcamentoRestante)
-        console.log(item.valorTotal)
-
         orcamentoRestante = Number(orcamentoRestante) - Number(item.valorTotal)
-
-
         return {
           orcamento_id,
           procedimento_id: item.id,
@@ -108,10 +113,10 @@ class PagamentoOrcamentoController {
         restante: orcamento.restante - valor
       })
 
+      ComissaoHelper.executadoProcedimento(orcamento_id, pagamento)
+
       return pagamento
     }
-
-
 
     ///////////////////////////////////////////////////
     if (condicao === 'total') {
@@ -200,95 +205,9 @@ class PagamentoOrcamentoController {
       return
     }
 
-
     ////////////////////////////////////////////////
     if (condicao === 'boleto') {
       // return especialidades
-      let boleto = []
-
-      // boleto.push({
-      //   orcamento_id,
-      //   formaPagamento: formaPagamento,
-      //   status: 'pago',
-      //   valor: Number(cobranca.entrada),
-      // })
-
-      ///////////////////////
-
-      // boleto.push({
-      //   orcamento_id,
-      //   paciente_id: orcamento.paciente_id,
-      //   status: gerarBoletos ? 'gerado' : 'salvo',
-      //   value: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
-      //   vencimento: String(moment(cobranca.vencimento).format()),
-      //   description: cobranca.descricao,
-      //   numberParcela: 1
-      // })
-
-      // for (let index = 1; index < cobranca.parcelas; index++) {
-      //   boleto.push({
-      //     orcamento_id,
-      //     paciente_id: orcamento.paciente_id,
-      //     status: gerarBoletos ? 'gerado' : 'salvo',
-      //     value: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
-      //     vencimento: String(moment(boleto[boleto.length - 1].vencimento).add(30, 'days').format()),
-      //     description: cobranca.descricao,
-      //     numberParcela: index + 1
-      //   })
-      // }
-
-      ////////////////////////////
-
-      // return boleto
-
-      const pagamento = await PagamentoOrcamento.create({
-        orcamento_id,
-        formaPagamento: formaPagamento,
-        status: 'pago',
-        valor: Number(cobranca.entrada),
-      }, trx)
-
-      // const boletos = await BoletosPagamento.createMany(boleto, trx)
-
-      // const teste = await ProcedimentoExecucao.query().whereIn('id', ids_procedimento)
-      // .update({status: 'pago'})
-
-      if (gerarBoletos) {
-        const paciente = await Assas.returnClientOrCreate(orcamento.paciente_id)
-
-        const { installment } = await Assas.createPayment({
-          clientID: paciente.id,
-          parcelas: cobranca.parcelas,
-          valorParcela: (Number(valor) - Number(cobranca.entrada)) / cobranca.parcelas,
-          vencimento: cobranca.vencimento,
-          description: cobranca.descricao,
-          externalReference: orcamento_id,
-        })
-
-        await Orcamento.query().where('id', orcamento_id).update({
-          parcelamento_id: installment,
-          carneLink: Env.get('CARNE_URL') + installment.split('_')[1],
-          status: 'andamento',
-          saldo: orcamento.valor,
-          restante: 0
-        }, trx)
-      } else {
-        await Orcamento.query().where('id', orcamento_id).update({
-          status: 'andamento',
-          saldo: cobranca.entrada,
-          restante: orcamento.valor - cobranca.entrada
-        }, trx)
-      }
-
-      await FormaPagamento.query().where('orcamento_id', orcamento.id).update({
-        entrada: cobranca.entrada,
-        parcelas: cobranca.parcelas
-      })
-
-
-      trx.commit()
-
-      return pagamento
     }
 
     const pagamento = await PagamentoOrcamento.create({
@@ -306,15 +225,247 @@ class PagamentoOrcamentoController {
     }
   }
 
-  /**
-   * Display a single pagamentoorcamento.
-   * GET pagamentoorcamentos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
+  async boleto({ request, response }) {
+    // return request.all()
+    const trx = await Database.beginTransaction()
+    const {
+      orcamento_id,
+      valorDigitado,
+      procedimentos,
+      especialidades,
+      lab,
+      metodoPagamento,
+      gerarBoletos,
+      boletoParams,
+      valorSelecionado
+    } = request.all()
+
+    const returnTotalOuParcial = () => {
+      if (Number(valorDigitado) === Number(valorSelecionado)) {
+        return 'pago'
+      }
+      return 'parcial'
+    }
+
+    let orcamento = await Orcamento.query().where('id', orcamento_id).first() // buscar orcamento
+    orcamento = orcamento.toJSON()
+
+    await Orcamento.query().where('id', orcamento_id).update({
+      lab: orcamento.lab + Number(lab),
+      restante: orcamento.restante - Number(valorDigitado)
+    })
+
+    procedimentos.forEach(async item => {
+      try {
+        await ProcedimentoExecucao.query().where('id', item).update({
+          status_pagamento: returnTotalOuParcial(),
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    })
+
+    await PagamentoOrcamento.create({
+      orcamento_id,
+      formaPagamento: boletoParams.metodoPagamento,
+      status: 'pago',
+      valor: Number(valorDigitado),
+    }, trx) // cria pagamento
+
+    if (gerarBoletos) {
+      const paciente = await Assas.returnClientOrCreate(orcamento.paciente_id)
+      const { installment } = await Assas.createPayment({
+        clientID: paciente.id,
+        parcelas: boletoParams.parcelas,
+        valorParcela: (Number(valor) - Number(boletoParams.entrada)) / boletoParams.parcelas,
+        vencimento: boletoParams.vencimento,
+        description: boletoParams.descricao,
+        externalReference: orcamento_id,
+      })
+
+      await Orcamento.query().where('id', orcamento_id).update({
+        parcelamento_id: installment,
+        carneLink: Env.get('CARNE_URL') + installment.split('_')[1],
+        status: 'andamento',
+        saldo: orcamento.valor,
+        restante: 0
+      }, trx)
+    } else {
+      await Orcamento.query().where('id', orcamento_id).update({
+        status: 'andamento',
+        saldo: boletoParams.entrada,
+        restante: orcamento.valor - boletoParams.entrada
+      }, trx)
+    } // gerar boletos
+
+    await FormaPagamento.query().where('orcamento_id', orcamento.id).update({
+      vencimento: boletoParams.vencimento,
+      entrada: boletoParams.entrada,
+      parcelas: boletoParams.parcelas
+    }, trx) // atualiza os metodos de pagamento
+
+    /////////////////////////////
+    await EspecialidadeHelper.updateValues(especialidades, orcamento_id) //atualiza os valores das especialidades
+    await ComissaoHelper.comissaoAvaliadorTotal(orcamento, boletoParams.entrada, 0) //cria a comissao do avaliador
+
+    let clinicConfig = await ClinicConfig.query()
+      .where('clinic_id', orcamento.clinic_id).first()
+    clinicConfig = clinicConfig.toJSON()
+
+    if (!clinicConfig.workBoletos) {
+      return
+    }
+
+    if (clinicConfig.comissao_boleto === 'orcamento') {
+      await EspecialidadeHelper.payComissao(especialidades, orcamento) //paga a comissao
+    }
+
+    trx.commit()
+
+    return
+  }
+
+  async total({ request, response }) {
+    const {
+      orcamento_id,
+      valorDigitado,
+      procedimentos,
+      especialidades,
+      lab,
+      metodoPagamento,
+      valorSelecionado
+    } = request.all()
+
+    const returnTotalOuParcial = () => {
+      if (Number(valorDigitado) === Number(valorSelecionado)) {
+        return 'pago'
+      }
+      return 'parcial'
+    }
+
+    let orcamento = await Orcamento.query().where('id', orcamento_id).first()
+    orcamento = orcamento.toJSON()
+
+    await Orcamento.query().where('id', orcamento_id).update({
+      lab: orcamento.lab + Number(lab),
+      restante: orcamento.restante - Number(valorDigitado)
+    })
+
+    procedimentos.forEach(async item => {
+      try {
+        await ProcedimentoExecucao.query().where('id', item).update({
+          status_pagamento: returnTotalOuParcial(),
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    })
+
+    await PagamentoOrcamento.createMany(especialidades.map(item => ({
+      orcamento_id,
+      especialidade_id: item.id,
+      formaPagamento: metodoPagamento,
+      status: 'pago',
+      valor: valorDigitado,
+      restanteOrcamento: orcamento.restante - valorDigitado,
+      valorAplicado: Number(item.valorAplicado),
+      restante: item.restante - Number(item.valorAplicado)
+    }))) //cria os pagamentos
+
+    await EspecialidadeHelper.updateValues(especialidades, orcamento_id) //atualiza os valores das especialidades
+    await ComissaoHelper.comissaoAvaliadorTotal(orcamento, valorDigitado, lab) //cria a comissao do avaliador
+    await EspecialidadeHelper.payComissao(especialidades, orcamento) //paga a comissao
+
+    return request.all()
+  }
+
+
+  async negociacao({ request, response }) {
+    const {
+      orcamento_id,
+      valorDigitado,
+      procedimentos,
+      especialidades,
+      lab,
+      metodoPagamento,
+      boleto,
+      valorSelecionado
+    } = request.all()
+
+    const returnTotalOuParcial = () => {
+      if (Number(valorDigitado) === Number(valorSelecionado)) {
+        return 'pago'
+      }
+      return 'parcial'
+    } // retorna status | PARCIAL OU TOTAL
+
+    let orcamento = await Orcamento.query().where('id', orcamento_id).first()
+    orcamento = orcamento.toJSON() // consulta o orçamento
+
+    await Orcamento.query().where('id', orcamento_id).update({
+      lab: orcamento.lab + Number(lab),
+      restante: orcamento.restante - Number(valorDigitado)
+    }) // atualiza informações no orçamento
+
+    const negociacao = await Negociacao.create({
+      orcamento_id: orcamento_id,
+      total: valorSelecionado,
+      pago: Number(valorDigitado),
+      status: returnTotalOuParcial(),
+      formaPagamento: boleto ? 'boleto' : 'vista'
+    }) // cria a negociação
+
+    const pagamentosNegociacao = await PagamentosNegociacao.create({
+      negociacao_id: negociacao.id,
+      formaPagamento: metodoPagamento,
+      status: 'pago',
+      valor: Number(valorDigitado)
+    }) // cria o pagamento
+
+    await EspecialidadeHelper.especialidadeNegociacao({
+      especialidades,
+      orcamento_id,
+      negociacao_id: negociacao.id
+    }) //cria especialidades vinculadas a negociação
+
+    await LabNegociacao.create({
+      negociacao_id: negociacao.id,
+      pago: Number(lab.valorAplicado),
+      restante: lab.total - Number(lab.valorAplicado)
+    })
+
+
+    procedimentos.forEach(async item => {
+      try {
+        await ProcedimentoExecucao.query().where('id', item).update({
+          status_pagamento: returnTotalOuParcial(),
+          negociacao_id: negociacao.id
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }) // atualiza os procedimentos
+
+    if (boleto) {
+      await PagamentoHelper.boleto({
+        negociacao_id: negociacao.id,
+        parcelas: boleto.parcelas,
+        vencimento: boleto.vencimento,
+        entrada: Number(boleto.entrada)
+      })
+    } // gera as negociações
+
+    await ComissaoHelper.comissaoAvaliadorTotal({
+      orcamento,
+      valorDigitado,
+      lab: Number(lab.valorAplicado),
+      boleto,
+    }) //cria a comissao do avaliador
+    await EspecialidadeHelper.payComissao(especialidades, orcamento) //paga a comissao
+
+  }
+
+
   async show({ params, request, response, view }) {
   }
 

@@ -43,6 +43,14 @@ class Orcamento extends Model {
     saldoEspecialidade() {
         return this.hasMany('App/Models/SaldoEspecialidade')
     }
+
+    especialidades() {
+        return this.hasMany('App/Models/EspecialidadeExecucao', 'id', 'orcamento_id')
+    }
+
+    negociacoes() {
+        return this.hasMany('App/Models/Negociacao', 'id', 'orcamento_id')
+    }
 }
 
 module.exports = Orcamento

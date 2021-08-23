@@ -5,6 +5,8 @@ const Orcamento = use('App/Models/Orcamento')
 const ProcedimentoExecucao = use('App/Models/ProcedimentoExecucao')
 const FormaPagamento = use('App/Models/FormaPagamento')
 const Helpers = use('App/Helpers/orcamento')
+const EspecialidadeExecucao = use('App/Models/EspecialidadeExecucao')
+const OrcamentoHelper = use('App/Helpers/orcamento')
 
 class OrcamentoController {
 
@@ -23,7 +25,7 @@ class OrcamentoController {
               builder.select('id', 'name')
             })
         })
-        .with('pagamento')
+        // .with('pagamento')
         .with('pagamentos', builder => {
           builder.with('especialidades')
           builder.with('procedimentos')
@@ -62,9 +64,11 @@ class OrcamentoController {
     let data = request.all()
 
     const procedimentos = Helpers.procedimentoHelper(data.procedimentos)
+    const procedimentosWithEspecialidade = Helpers.procedimentoHelperWithEspecialidade(data.procedimentos)
     const orcamento = Helpers.orcamentoHelper(data)
-    const pagamento = Helpers.pagamentoHelper(data.pagamento)
 
+    // const especialidades = OrcamentoHelper.returnEspecialidadesBefore(procedimentosWithEspecialidade)
+    // return especialidades
     // return {procedimentos, orcamento, pagamento}
 
     let saveOrcamento = {
@@ -76,7 +80,6 @@ class OrcamentoController {
     }
     saveOrcamento = await Orcamento.create(saveOrcamento, trx)
 
-
     let saveProcedimento = procedimentos.map(item => ({
       ...item,
       desconto: item.valor,
@@ -84,32 +87,50 @@ class OrcamentoController {
     }))
     saveProcedimento = await ProcedimentoExecucao.createMany(saveProcedimento, trx)
 
+    // let savePagamento = {
+    //   ...pagamento,
+    //   orcamento_id: saveOrcamento.id
+    // }
+    // savePagamento = await FormaPagamento.create(savePagamento, trx)
 
-    let savePagamento = {
-      ...pagamento,
+
+    const especialidades = OrcamentoHelper.returnEspecialidadesBefore(procedimentosWithEspecialidade)
+
+    await EspecialidadeExecucao.createMany(especialidades.map(item => ({
+      especialidade_id: item.id,
+      valor: item.valor,
+      restante: item.restante,
       orcamento_id: saveOrcamento.id
-    }
-    savePagamento = await FormaPagamento.create(savePagamento, trx)
+    })), trx)
 
     await trx.commit();
   }
 
   async show({ params, request, response, view }) {
-    const orcamento = await Orcamento.query()
+    let orcamento = await Orcamento.query()
       .where('id', params.id)
-      .with('procedimentos', builder => {
-        builder
-          .with('dentista', builder => {
-            builder.select('id', 'firstName', 'lastName')
+      .with('procedimentos', procedimentos => {
+        procedimentos
+          .with('dentista', dentista => {
+            dentista.select('id', 'firstName', 'lastName')
           })
-          .with('procedimento.especialidade', builder => {
-            builder.select('id', 'name')
+          .with('procedimento', procedimento => {
+            procedimento.with('especialidade', especialidade => {
+              especialidade.select('id', 'name')
+            })
+            procedimento.with('lab')
           })
           .orderBy('id', 'cres')
       })
-      .with('pagamento')
+      .with('negociacoes.pagamentos')
       .with('pagamentos.especialidades')
       .first()
+
+    orcamento = orcamento.toJSON()
+
+
+    let especialidades = Helpers.returnEspecialidades(orcamento)
+    let labs = Helpers.returnLabs(orcamento)
 
     return orcamento
   }
@@ -132,8 +153,6 @@ class OrcamentoController {
       avaliador: data.avaliador,
       valorDesconto: procedimentos.reduce((a, b) => a + b.valor, 0)
     }
-
-    console.log(procedimentos)
 
     saveOrcamento = await Orcamento.query().where('id', data.id).update(saveOrcamento, trx)
 
@@ -162,7 +181,7 @@ class OrcamentoController {
   }
 
   async destroy({ params, request, response }) {
-    const orcamento = Orcamento.query().where('id', params.id).delete()
+    await Orcamento.query().where('id', params.id).delete()
   }
 }
 

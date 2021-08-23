@@ -45,6 +45,9 @@ class OrcamentoSchema extends Schema {
       table.string('carneLink')
       table.string('parcelamento_id').unique()
 
+
+
+      table.float('lab', 8, 2)
       table.float('valor', 8, 2)
       table.float('valorDesconto', 8, 2)
       table.float('restante', 8, 2)

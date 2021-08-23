@@ -4,13 +4,16 @@
 const Schema = use('Schema')
 
 class ClinicConfigsSchema extends Schema {
-  up () {
+  up() {
     this.create('clinic_configs', (table) => {
       table.increments()
       table.integer('clinic_id').references('id').inTable('clinics').notNullable()
-      
+
       table.boolean('workBoletos').defaultTo(false)
       table.integer('maxParcelas')
+
+      table.string('comissao_boleto')
+
       table.float('entMinima', 8, 2)
 
 
@@ -18,7 +21,7 @@ class ClinicConfigsSchema extends Schema {
     })
   }
 
-  down () {
+  down() {
     this.drop('clinic_configs')
   }
 }

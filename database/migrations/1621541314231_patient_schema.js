@@ -20,6 +20,8 @@ class PatientSchema extends Schema {
       table.string('cpf', 250).unique()
       table.string('rg', 250).unique()
 
+      table.string('avatar_url')
+
       table.string('rg_file', 250)
       table.string('cpf_file', 250)
       table.string('address_file', 250)

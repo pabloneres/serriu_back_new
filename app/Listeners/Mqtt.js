@@ -4,7 +4,7 @@ class MockListener extends MqttListener {
   /*
    * Subscription string. Uses the MQTT wildcard format.
    */
-  async connected () {
+  async connected() {
     console.log('Mqtt Connected')
     return
   }
@@ -12,7 +12,7 @@ class MockListener extends MqttListener {
   /**
   * Message handler is passed the String data of the message and the matched wildcard values
   */
-  async disconnected () {
+  async disconnected() {
     console.log('Mqtt Disconnected')
   }
 }

@@ -4,16 +4,15 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const Patient = use('App/Models/Patient')
-const Database = use('Database')
-
 /**
- * Resourceful controller for interacting with patients
+ * Resourceful controller for interacting with comissaos
  */
-class PatientController {
+
+const Comissao = use('App/Models/Comissao')
+class ComissaoController {
   /**
-   * Show a list of all patients.
-   * GET patients
+   * Show a list of all comissaos.
+   * GET comissaos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -21,24 +20,21 @@ class PatientController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    const { id, name } = request.get()
-    const patients = await Patient.query()
-      .where('clinic_id', id)
-      .andWhere('firstName', 'ilike', `%${name}%`)
-      .orderBy('id', 'desc')
-      .fetch()
-    // const patients = await Patient.query()
-    //   .where('clinic_id', id)
-    //   .andWhere('firstName', 'LIKE', '%' + name + '%')
-    //   .orderBy('id', 'desc')
-    //   .fetch()
+    const { status, clinica_id } = request.get()
 
-    return patients
+    const comissoes = await Comissao.query()
+      .where('clinica_id', clinica_id)
+      .andWhere('status', status)
+      .with('dentista')
+      .with('paciente')
+      .fetch()
+
+    return comissoes
   }
 
   /**
-   * Render a form to be used for creating a new patient.
-   * GET patients/create
+   * Render a form to be used for creating a new comissao.
+   * GET comissaos/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -49,39 +45,31 @@ class PatientController {
   }
 
   /**
-   * Create/save a new patient.
-   * POST patients
+   * Create/save a new comissao.
+   * POST comissaos
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
   async store({ request, response }) {
-    const data = request.all()
-
-    const patient = await Patient.create(data)
-
-    return patient
   }
 
   /**
-   * Display a single patient.
-   * GET patients/:id
+   * Display a single comissao.
+   * GET comissaos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params: { id }, request, response, view }) {
-    const patient = await Patient.findOrFail(id)
-
-    return patient
+  async show({ params, request, response, view }) {
   }
 
   /**
-   * Render a form to update an existing patient.
-   * GET patients/:id/edit
+   * Render a form to update an existing comissao.
+   * GET comissaos/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -92,8 +80,8 @@ class PatientController {
   }
 
   /**
-   * Update patient details.
-   * PUT or PATCH patients/:id
+   * Update comissao details.
+   * PUT or PATCH comissaos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -101,18 +89,16 @@ class PatientController {
    */
   async update({ params, request, response }) {
     const data = request.all()
+    await Comissao.query()
+      .where('id', params.id)
+      .update(data)
 
-    const patient = await Patient.findOrFail(params.id)
-
-    patient.merge(data)
-
-    patient.save()
-
+    return
   }
 
   /**
-   * Delete a patient with id.
-   * DELETE patients/:id
+   * Delete a comissao with id.
+   * DELETE comissaos/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -122,4 +108,4 @@ class PatientController {
   }
 }
 
-module.exports = PatientController
+module.exports = ComissaoController

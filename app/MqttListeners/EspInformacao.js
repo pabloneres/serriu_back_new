@@ -11,7 +11,7 @@ class EspInformacao extends MqttListener {
   *
   * @returns {string}
   */
-  get subscription () {
+  get subscription() {
     return 'serriu/esp/informacoes';
   }
 
@@ -21,7 +21,7 @@ class EspInformacao extends MqttListener {
   * @param {String} message Data of the message
   * @param {String[]} wildcardMatches Wildcard matches in your subscription string
   */
-  async handleMessage (message, wildcardMatches) {
+  async handleMessage(message, wildcardMatches) {
     try {
       Event.fire('ESP:Infos', message)
     } catch (error) {

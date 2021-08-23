@@ -20,8 +20,8 @@ class DepartmentClincController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-    const {clinic_id} = request.get()
+  async index({ request, response, view }) {
+    const { clinic_id } = request.get()
 
     const departments = await DepartmentClinc.query().where('clinic_id', clinic_id).fetch()
 
@@ -38,7 +38,7 @@ class DepartmentClincController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
+  async create({ request, response, view }) {
   }
 
   /**
@@ -49,14 +49,14 @@ class DepartmentClincController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response, params }) {
+  async store({ request, response, params }) {
     const data = request.all()
     // return data
 
     let result = await DepartmentClinc.query()
-    .where('clinic_id', params.id)
-    .andWhere('department_id', data.department_id)
-    .first()
+      .where('clinic_id', params.id)
+      .andWhere('department_id', data.department_id)
+      .first()
 
     if (!result) {
       await DepartmentClinc.create({
@@ -68,8 +68,8 @@ class DepartmentClincController {
     }
 
     await DepartmentClinc.query()
-    .where('id', result.id)
-    .update({discount: data.discount})
+      .where('id', result.id)
+      .update({ discount: data.discount })
 
     return result
 
@@ -99,13 +99,13 @@ class DepartmentClincController {
     // let obj = []
 
     // Object.keys(data).forEach(function(key) {
-      
+
     //   obj.push({
     //     clinic_id: params.id,
     //     department_id: data[key].department_id,
     //     discount: data[key].desconto
     //   })
-      
+
     // });
 
     // await DepartmentClinc.createMany(obj)
@@ -120,7 +120,7 @@ class DepartmentClincController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
   }
 
   /**
@@ -132,7 +132,7 @@ class DepartmentClincController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
+  async edit({ params, request, response, view }) {
   }
 
   /**
@@ -143,7 +143,7 @@ class DepartmentClincController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
   }
 
   /**
@@ -154,7 +154,7 @@ class DepartmentClincController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
   }
 }
 
