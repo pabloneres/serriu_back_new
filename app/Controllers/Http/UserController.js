@@ -43,7 +43,6 @@ class UserController {
   }
 
   async store({ request }) {
-    return request.all()
     const trx = await Database.beginTransaction()
     const data = request.all();
 

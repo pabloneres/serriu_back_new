@@ -119,6 +119,7 @@ class PatientController {
    * @param {Response} ctx.response
    */
   async destroy({ params, request, response }) {
+    await Patient.query().where('id', params.id).delete()
   }
 }
 
