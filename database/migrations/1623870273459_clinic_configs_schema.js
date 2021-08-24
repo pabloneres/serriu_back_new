@@ -7,7 +7,12 @@ class ClinicConfigsSchema extends Schema {
   up() {
     this.create('clinic_configs', (table) => {
       table.increments()
-      table.integer('clinic_id').references('id').inTable('clinics').notNullable()
+      table.integer('clinic_id')
+        .references('id')
+        .inTable('clinics')
+        .notNullable()
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE')
 
       table.boolean('workBoletos').defaultTo(false)
       table.integer('maxParcelas')
