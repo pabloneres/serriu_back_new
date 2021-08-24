@@ -20,7 +20,7 @@ class ClinicController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     const clinics = await Clinic.query().with('config').fetch()
 
     return clinics
@@ -35,7 +35,7 @@ class ClinicController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
+  async create({ request, response, view }) {
   }
 
   /**
@@ -46,13 +46,13 @@ class ClinicController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
     const data = request.all()
-    
+
     const clinic = await Clinic.create(data)
-    
-    await ClinicConfig.create({clinic_id: clinic.id})
-    
+
+    await ClinicConfig.create({ clinic_id: clinic.id })
+
   }
 
   /**
@@ -64,7 +64,7 @@ class ClinicController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
     const clinic = await Clinic.findOrFail(params.id)
 
     return clinic
@@ -79,7 +79,7 @@ class ClinicController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
+  async edit({ params, request, response, view }) {
   }
 
   /**
@@ -90,7 +90,7 @@ class ClinicController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params: {id}, request, response }) {
+  async update({ params: { id }, request, response }) {
     const data = request.all()
 
     const clinic = await Clinic.findOrFail(id)
@@ -108,10 +108,10 @@ class ClinicController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params: {id}, request, response }) {
+  async destroy({ params: { id }, request, response }) {
     const clinic = await Clinic.findOrFail(id)
 
-    clinic.delete()
+    await clinic.delete()
   }
 }
 
