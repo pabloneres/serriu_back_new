@@ -64,6 +64,9 @@ class ProcedimentoExecucaoController {
   }
 
   async store({ request, response }) {
+  }
+
+  async discount({ request, response }) {
     // return request.all()
     const data = request.all()
 

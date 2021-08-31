@@ -133,6 +133,20 @@ class NegociacaoBoletoController {
       })
   }
 
+  async changeNegociacao({ params, request, response }) {
+    const {
+      parcelas,
+      vencimento
+    } = request.all()
+
+    await NegociacaoBoleto.query()
+      .where('id', params.id)
+      .update({
+        parcelas,
+        vencimento
+      })
+  }
+
   /**
    * Delete a negociacaoboleto with id.
    * DELETE negociacaoboletos/:id

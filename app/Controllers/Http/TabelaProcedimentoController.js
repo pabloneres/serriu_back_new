@@ -22,7 +22,7 @@ class TabelaProcedimentoController {
     const { id } = request.get()
 
     const procedimentos = await Procediemento.query().where('tabela_id', Number(id))
-      .with('especialidade').fetch()
+      .with('especialidade').orderBy('id', 'desc').fetch()
 
     return procedimentos
   }
@@ -49,9 +49,15 @@ class TabelaProcedimentoController {
    * @param {Response} ctx.response
    */
   async store({ request, response }) {
-    const data = request.all()
+    const data = request.only([
+      'especialidade_id',
+      'geral',
+      'labsService',
+      'name',
+      'tabela_id',
+      'valor'
+    ])
 
-    delete data.preco
     await Procediemento.create(data)
   }
 
@@ -90,11 +96,18 @@ class TabelaProcedimentoController {
   async update({ params, request, response }) {
     const procedimento = await Procediemento.findOrFail(params.id)
 
-    const data = request.all()
+    const data = request.only([
+      'especialidade_id',
+      'geral',
+      'labsService',
+      'name',
+      'tabela_id',
+      'valor'
+    ])
 
-    procedimento.merge({ name: data.name })
+    procedimento.merge(data)
 
-    procedimento.save()
+    await procedimento.save()
   }
 
   /**

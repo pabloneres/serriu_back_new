@@ -175,6 +175,7 @@ Route.group(() => {
   Route.post('/', 'ProcedimentoExecucaoController.store')
   Route.put('/:id', 'ProcedimentoExecucaoController.update')
   Route.delete('/:id', 'ProcedimentoExecucaoController.destroy')
+  Route.post('/discount', 'ProcedimentoExecucaoController.discount')
 }).prefix('procedimentoExecucao').middleware(['auth'])
 
 
@@ -225,5 +226,6 @@ Route.group(() => {
 }).prefix('faturamento').middleware(['auth'])
 
 Route.group(() => {
-  Route.get('/:id', 'NegociacaoBoletoController.update')
+  Route.put('/:id', 'NegociacaoBoletoController.update')
+  Route.put('/change/:id', 'NegociacaoBoletoController.changeNegociacao')
 }).prefix('negociacao_boleto').middleware(['auth'])
