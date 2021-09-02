@@ -70,7 +70,18 @@ class ProcedimentoExecucaoController {
     // return request.all()
     const data = request.all()
 
-    const user = await User.findBy('code', data.passwordCode)
+    let procedimento = await ProcedimentoExecucao.query().where('id', data.id).first()
+    procedimento = procedimento.toJSON()
+
+    if (procedimento.negociacao_id) {
+      response.status(401).send({ message: 'Esse procedimento já pertence a uma negociação' })
+      return
+    }
+
+    let user = await User.findBy('code', data.passwordCode)
+    user = user.toJSON()
+
+    console.log(user)
 
     if (!user) {
       response.status(401).send({ message: 'Acesso negado' })
@@ -78,15 +89,13 @@ class ProcedimentoExecucaoController {
 
     const orcamento = await Orcamento.findBy('id', data.orcamento_id)
 
-    const diff = data.valor - Number(data.valorTotal)
+    const diff = data.valor - Number(data.desconto)
     const porcentagem = ((diff * 100) / data.valor).toFixed(1)
-
-    const department = await user.department().first()
 
     const descontoPermitido = await DepartmentClinc
       .query()
       .where('clinic_id', orcamento.clinic_id)
-      .andWhere('department_id', department.id).first()
+      .andWhere('department_id', user.department_id).first()
 
     const permitido = descontoPermitido.discount >= porcentagem
 
@@ -100,8 +109,8 @@ class ProcedimentoExecucaoController {
       valorDesconto: orcamento.valorDesconto - diff
     })
 
-    const procedimento = await ProcedimentoExecucao.query().where('id', data.id).update({
-      desconto: Number(data.valorTotal)
+    await ProcedimentoExecucao.query().where('id', data.id).update({
+      desconto: Number(data.desconto)
     })
 
     return procedimento

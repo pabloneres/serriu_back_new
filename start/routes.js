@@ -229,3 +229,19 @@ Route.group(() => {
   Route.put('/:id', 'NegociacaoBoletoController.update')
   Route.put('/change/:id', 'NegociacaoBoletoController.changeNegociacao')
 }).prefix('negociacao_boleto').middleware(['auth'])
+
+
+Route.group(() => {
+  Route.get('/agendamentos', 'AgendamentoController.index')
+  Route.post('/agendamentos', 'AgendamentoController.store')
+  Route.delete('/agendamentos/:id', 'AgendamentoController.destroy')
+  Route.put('/agendamentos/:id', 'AgendamentoController.update')
+}).middleware(['auth'])
+
+
+Route.group(() => {
+  Route.get('/', 'AgendaController.index')
+  Route.get('/:id', 'AgendaController.show')
+  Route.post('/', 'AgendaController.store')
+  Route.put('/:id', 'AgendaController.update')
+}).prefix('agenda').middleware(['auth'])

@@ -19,11 +19,11 @@ class ProcedimentoExecucaoSchema extends Schema {
       table
         .integer('especialidade_id')
         .unsigned()
-        .notNullable()
         .references('id')
         .inTable('tabela_especialidades')
         .onUpdate('CASCADE')
-        .onDelete('CASCADE')
+      // .notNullable()
+      // .onDelete('CASCADE')
 
       table
         .integer('procedimento_id')
