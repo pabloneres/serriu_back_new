@@ -18,6 +18,7 @@ const ClinicConfig = use('App/Models/ClinicConfig')
 const FormaPagamento = use('App/Models/FormaPagamento')
 const ComissaoBoleto = use('App/Helpers/comissaoBoleto')
 const Negociacao = use('App/Models/Negociacao')
+const ExecucaoHelper = use('App/Helpers/execucaoHelper')
 
 class ProcedimentoExecucaoController {
   async index({ request, response, view }) {
@@ -136,6 +137,18 @@ class ProcedimentoExecucaoController {
       .with('procedimento')
       .first()
     procedimento = procedimento.toJSON() // busca o procedimento a executar
+
+    const permissaoParaExecutar = await ExecucaoHelper.executarSemSaldo({
+      orcamento,
+      procedimento,
+      dentista_id: data.dentista_id
+    })
+
+    if (!permissaoParaExecutar) {
+      response.status(401).send({ message: 'Execução não permitida' })
+      return
+    }
+    // return
 
     let clinicConfig = await EspecialidadeHelper.clinicConfig(orcamento.clinic_id) // busca a configuração da clinica
 
