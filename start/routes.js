@@ -232,11 +232,11 @@ Route.group(() => {
 
 
 Route.group(() => {
-  Route.get('/agendamentos', 'AgendamentoController.index')
-  Route.post('/agendamentos', 'AgendamentoController.store')
-  Route.delete('/agendamentos/:id', 'AgendamentoController.destroy')
-  Route.put('/agendamentos/:id', 'AgendamentoController.update')
-}).middleware(['auth'])
+  Route.get('/', 'AgendamentoController.index')
+  Route.post('/', 'AgendamentoController.store')
+  Route.delete('/:id', 'AgendamentoController.destroy')
+  Route.put('/:id', 'AgendamentoController.update')
+}).middleware(['auth']).prefix('agendamento')
 
 
 Route.group(() => {

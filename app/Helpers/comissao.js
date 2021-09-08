@@ -103,6 +103,11 @@ const comissao = {
 
     console.log(comissao)
 
+    if (comissao === 0) {
+      if (!clinicConfig.comissoes_zeradas) {
+        return
+      }
+    }
 
     let dentista_id = especialidade.titular
     let clinica_id = orcamento.clinic_id

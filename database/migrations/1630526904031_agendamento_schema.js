@@ -13,25 +13,22 @@ class AgendamentoSchema extends Schema {
         // .notNullable()
         .references('id')
         .inTable('patients')
-        .onUpdate('CASCADE')
-        .onDelete('CASCADE')
+
       table
         .integer('dentista_id')
         .unsigned()
         .references('id')
         .inTable('users')
-        .onUpdate('CASCADE')
-        .onDelete('CASCADE')
+
       table
         .integer('clinica_id')
         .unsigned()
         .notNullable()
         .references('id')
         .inTable('clinics')
-        .onUpdate('CASCADE')
-        .onDelete('CASCADE')
-      table.datetime('startDate')
-      table.datetime('endDate')
+
+      table.datetime('start')
+      table.datetime('end')
       table.string('obs')
 
       table.integer('primeiraConsulta').defaultTo(0)

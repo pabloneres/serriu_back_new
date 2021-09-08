@@ -14,7 +14,7 @@ class FichaClinicaController {
       .where('paciente_id', paciente_id)
       .with('especialidades', especialidades => {
         especialidades.with('procedimentos', procedimentos => {
-          procedimentos.whereNotNull('negociacao_id')
+          // procedimentos.whereNotNull('negociacao_id')
           procedimentos.with('procedimento')
           procedimentos.with('dentista', dentista => {
             dentista.select('id', 'firstName', 'lastName')
@@ -36,12 +36,12 @@ class FichaClinicaController {
     }))
 
 
-    orcamentos = orcamentos.map(orcamento => ({
-      ...orcamento,
-      especialidades: orcamento.especialidades.filter(especialidade => especialidade.procedimentos.length > 0),
-    }))
+    // orcamentos = orcamentos.map(orcamento => ({
+    //   ...orcamento,
+    //   especialidades: orcamento.especialidades.filter(especialidade => especialidade.procedimentos.length > 0),
+    // }))
 
-    orcamentos = orcamentos.filter(orcamento => orcamento.especialidades.length > 0)
+    // orcamentos = orcamentos.filter(orcamento => orcamento.especialidades.length > 0)
 
     return orcamentos
   }

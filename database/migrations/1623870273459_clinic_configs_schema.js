@@ -15,6 +15,7 @@ class ClinicConfigsSchema extends Schema {
         .onDelete('CASCADE')
 
       table.boolean('workBoletos').defaultTo(false)
+      table.boolean('comissoes_zeradas').defaultTo(false)
       table.integer('maxParcelas')
 
       table.string('comissao_boleto')

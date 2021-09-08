@@ -22,7 +22,9 @@ class AgendamentoController {
     const agendamentos = await Agendamentos.query()
       .where('clinica_id', clinica_id)
       .with('paciente')
-      .with('dentista')
+      .with('dentista', dentista => {
+        dentista.with('profile')
+      })
       .fetch()
 
     return agendamentos
@@ -30,50 +32,26 @@ class AgendamentoController {
 
   async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
-    const { paciente_id,
+    const {
+      paciente_id,
       dentista_id,
+      clinica_id,
       startDate,
       endDate,
       obs,
-      pacienteData,
-      status
     } = request.all()
 
     let pacienteId = undefined
 
-    // if (pacienteData) {
-    //   let [{ 'max(`id_acesso`)': max }] = await Database.from('patients').max('id_acesso')
-
-    //   if (!max) {
-    //     data.id_acesso = 100000
-    //     max = 100000
-    //   }
-
-    //   pacienteId = await Patient.create({
-    //     id_acesso: max + 1,
-    //     user_id: auth.user.id,
-    //     name: pacienteData.nome,
-    //     email: pacienteData.email,
-    //     tel: pacienteData.telefone,
-    //   }, trx)
-    // }
-
     const agendamento = await Agendamentos.create({
-      paciente_id: pacienteId ? pacienteId.id : paciente_id,
+      paciente_id,
       dentista_id,
-      clinica_id: auth.user.id,
+      clinica_id,
       startDate,
       endDate,
       obs,
-      status
     }, trx)
 
-    // const log = await AgendamentoLog.create({
-    //   agendamento_id: agendamento.id,
-    //   usuario_id: auth.user.id,
-    //   metodo: 'STORE',
-    //   type: 'Agendamento',
-    // }, trx)
 
     await trx.commit();
 
