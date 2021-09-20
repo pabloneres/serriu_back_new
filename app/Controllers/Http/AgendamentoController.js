@@ -38,6 +38,8 @@ class AgendamentoController {
       clinica_id,
       startDate,
       endDate,
+      tipo,
+      status,
       obs,
     } = request.all()
 
@@ -49,6 +51,8 @@ class AgendamentoController {
       clinica_id,
       startDate,
       endDate,
+      tipo,
+      status,
       obs,
     }, trx)
 
@@ -62,32 +66,14 @@ class AgendamentoController {
   }
 
   async update({ params, request, response, auth }) {
-    const trx = await Database.beginTransaction();
 
     const data = request.all()
-    const old = await Database.table('agendamentos').where('id', params.id).first()
 
     await Agendamentos.query().where('id', params.id).update({
       ...data,
-      type: undefined
-    }, trx)
+    })
 
-    const newData = await Database.table('agendamentos').where('id', params.id).first()
-
-    console.log(old)
-
-    const log = await AgendamentoLog.create({
-      agendamento_id: params.id,
-      usuario_id: auth.user.id,
-      metodo: 'PUT',
-      type: data.type,
-      origem: JSON.stringify(old[data.type]),
-      final: JSON.stringify(newData[data.type])
-    }, trx)
-
-    await trx.commit();
-
-    return log
+    return
   }
 
   async destroy({ params, request, response }) {

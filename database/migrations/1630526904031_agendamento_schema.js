@@ -31,11 +31,11 @@ class AgendamentoSchema extends Schema {
       table.datetime('end')
       table.string('obs')
 
-      table.integer('primeiraConsulta').defaultTo(0)
+      table.string('tipo')
       // 0 - não 
       // 1 - sim
 
-      table.string('status').defaultTo(0)
+      table.string('status')
       //status 
       //Agendado - 0
       //Confirmado - 1
